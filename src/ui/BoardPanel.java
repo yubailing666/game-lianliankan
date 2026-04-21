@@ -70,7 +70,7 @@ public class BoardPanel extends JPanel {
         this.setPreferredSize(new Dimension(this.width, this.height));
         this.cellWidth = this.width / totalCol;
         this.cellHeight = this.height / totalRow;
-        File dir = new File("resource");
+        File dir = new File("game-lianliankan" + File.separator + "resource");
         File[] files = dir.listFiles();
         for (File file : files) {
             if (file.getName().endsWith(".png")) {
