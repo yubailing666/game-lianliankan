@@ -7,6 +7,7 @@ public class StatusPanel extends JPanel {
     JLabel statusLabel;
     JLabel timeLabel;
     Timer timer;
+    int totalSeconds;
     int seconds;
     int minutes;
     int hours;
@@ -23,17 +24,12 @@ public class StatusPanel extends JPanel {
         this.height = height;
         statusLabel = new JLabel("ready");
         timeLabel = new JLabel("00:00:00");
+        totalSeconds =120;
         timer = new Timer(1000, e -> {
-            seconds++;
-            if (seconds == 60) {
-                minutes++;
-                seconds = 0;
-                if (minutes == 60) {
-                    minutes = 0;
-                    hours++;
-                }
-            }
-            timeLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+            totalSeconds--;
+            seconds=totalSeconds%60;
+            minutes=totalSeconds/60;
+            timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
         });
         timer.start();
         statusLabel.setFont(new Font("Arial", Font.BOLD, 50));
