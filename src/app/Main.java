@@ -20,23 +20,32 @@ public class Main {
             loginFrame.setSize(400,250);
             loginFrame.setLayout(null);
 
+
             JTextField Account = new JTextField();
             Account.setText("请输入账号");
-            Account.setSize(200,40);
-            Account.setLocation(100,30);
+            Account.setSize(170,35);
+            Account.setLocation(110,80);
+            Account.setOpaque(false);
 
             JTextField Password = new JTextField();
             Password.setText("请输入密码");
-            Password.setSize(200,40);
-            Password.setLocation(100,90);
+            Password.setSize(170,35);
+            Password.setLocation(110,115);
+            Password.setOpaque(false);
 
             JButton login = new JButton("登录");
-            login.setLocation(100,150);
-            login.setSize(100,40);
+            login.setLocation(110,150);
+            login.setSize(80,30);
+            login.setOpaque(false);
+            login.setContentAreaFilled(false);
+            login.setBorderPainted(true);
 
             JButton register = new JButton("注册");
             register.setLocation(200,150);
-            register.setSize(100,40);
+            register.setSize(80,30);
+            register.setOpaque(false);
+            register.setContentAreaFilled(false);
+            register.setBorderPainted(true);
 
             register.addActionListener(e -> {
                 String username = Account.getText();
@@ -67,6 +76,16 @@ public class Main {
             loginFrame.add(Account);
             loginFrame.add(Password);
             loginFrame.setVisible(true);
+            String bgPath = "game-lianliankan" + File.separator + "resource" + File.separator + "background.png";
+            File bgFile = new File(bgPath);
+            if (bgFile.exists()) {
+                JLabel backgroundLabel = new JLabel(new ImageIcon(bgPath));
+                backgroundLabel.setSize(400, 250);
+                backgroundLabel.setLocation(-10, -6);
+                loginFrame.add(backgroundLabel);
+            } else {
+                System.err.println("警告: 背景图片不存在: " + bgFile.getAbsolutePath());
+            }
             login.addActionListener(e -> {
                 String username = Account.getText();
                 String password = Password.getText();
@@ -120,4 +139,3 @@ public class Main {
         return false;
     }
 }
-
