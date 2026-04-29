@@ -75,8 +75,8 @@ public class Main {
             loginFrame.add(register);
             loginFrame.add(Account);
             loginFrame.add(Password);
-            loginFrame.setVisible(true);
-            String bgPath = "game-lianliankan" + File.separator + "resource" + File.separator + "background.png";
+            
+            String bgPath = System.getProperty("user.dir") + File.separator + "game-lianliankan" + File.separator + "resource" + File.separator + "background.png";
             File bgFile = new File(bgPath);
             if (bgFile.exists()) {
                 JLabel backgroundLabel = new JLabel(new ImageIcon(bgPath));
@@ -86,6 +86,8 @@ public class Main {
             } else {
                 System.err.println("警告: 背景图片不存在: " + bgFile.getAbsolutePath());
             }
+            
+            loginFrame.setVisible(true);
             login.addActionListener(e -> {
                 String username = Account.getText();
                 String password = Password.getText();
