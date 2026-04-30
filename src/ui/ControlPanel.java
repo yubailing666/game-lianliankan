@@ -10,7 +10,7 @@ public class ControlPanel extends JPanel {
     int offSetY;
     int width;
     int height;
-    public ControlPanel(StatusPanel statusPanel, int offSetX, int offSetY,int width, int height) {
+    public ControlPanel(StatusPanel statusPanel,BoardPanel boardPanel, int offSetX, int offSetY,int width, int height) {
         this.setLayout(null);
         this.setBounds(offSetX, offSetY, width, height);
         this.offSetX = offSetX;
@@ -29,6 +29,7 @@ public class ControlPanel extends JPanel {
         this.add(startButton);
         this.startButton.addActionListener(e -> {
             statusPanel.startGame();
+            boardPanel.startGame();
         });
     }
 

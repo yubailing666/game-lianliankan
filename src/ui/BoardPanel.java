@@ -18,6 +18,7 @@ public class BoardPanel extends JPanel {
 
     List<Image> imageList = new ArrayList<>();
     GameBoard gameBoard;
+    StatusPanel statusPanel;
     List<Line> lineList = new ArrayList<>();
     int totalRow;
     int totalCol;
@@ -29,6 +30,10 @@ public class BoardPanel extends JPanel {
     Position firstSelected = null;
     Position secondSelected = null;
     boolean animating = false;
+    boolean started;
+    public void startGame(){
+        started =true;
+    }
     public Position getPositionByPoint(int x, int y) {
 
         int col = x / cellWidth;
@@ -57,7 +62,8 @@ public class BoardPanel extends JPanel {
         repaint();
     }
 
-    public BoardPanel(GameBoard gameBoard, int offSetX, int offSetY,int width, int height) {
+    public BoardPanel(GameBoard gameBoard, StatusPanel statusPanel, int offSetX, int offSetY,int width, int height) {
+        this.statusPanel = statusPanel;
         this.offSetX = offSetX;
         this.offSetY = offSetY;
         this.setBounds(offSetX, offSetY, width, height);
@@ -91,6 +97,9 @@ public class BoardPanel extends JPanel {
         });
     }
     public void handleClick(int x, int y) {
+        if (!started){
+            return;
+        }
         if (animating) {
             return;
         }
@@ -143,6 +152,7 @@ public class BoardPanel extends JPanel {
             Timer timer = new Timer(300, e -> {
                 firstCell.setEmpty(true);
                 secondCell.setEmpty(true);
+                statusPanel.addScore(10);
                 firstCell.setChosen(false);
                 secondCell.setChosen(false);
                 lineVisible = false;

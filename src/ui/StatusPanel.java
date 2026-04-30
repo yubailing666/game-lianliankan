@@ -17,6 +17,7 @@ public class StatusPanel extends JPanel {
     int minutesUsed;
     int seconds;
     int minutes;
+    int score;
 
     public StatusPanel(int offSetX, int offSetY, int width, int height) {
         this.setBounds(offSetX, offSetY, width, height);
@@ -85,5 +86,10 @@ public class StatusPanel extends JPanel {
     public void startGame() {
         statusLabel.setText("进行中");
         timer.start();
+    }
+
+    public void addScore(int points) {
+        score += points;
+        scoreValue.setText(String.valueOf(score));
     }
 }

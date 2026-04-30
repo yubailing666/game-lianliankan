@@ -20,14 +20,11 @@ public class GameFrame extends JFrame {
 
         // 1. 初始化棋子生成器
         ChessGenerator chessGenerator = new ChessGenerator();
-        int coreSize = 4; // 核心棋盘尺寸（4x4，最终棋盘6x6：4+2边框）
-        Cell[][] board = chessGenerator.generateChessBoard(coreSize); // 调用修复后的方法
+        int coreSize = 4;
+        Cell[][] board = chessGenerator.generateChessBoard(coreSize);
         int totalSize = coreSize + 2;
 
-        // 2. 初始化棋盘面板
-        BoardPanel boardPanel = new BoardPanel(new GameBoard(totalSize, totalSize, board), 0, 100, 800, 800);
-
-        // 3. 窗口基础设置
+        // 2. 窗口基础设置
         this.title = title;
         this.width = width;
         this.height = height;
@@ -35,9 +32,16 @@ public class GameFrame extends JFrame {
         this.setSize(width, height);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // 4. 初始化面板并添加
+        // 3. 先创建 StatusPanel
         this.statusPanel = new StatusPanel(0, 0, 800, 100);
-        this.controlPanel = new ControlPanel(statusPanel, 0, 900, 800, 100);
+
+        // 4. 初始化棋盘面板（把 statusPanel 传进去）
+        BoardPanel boardPanel = new BoardPanel(new GameBoard(totalSize, totalSize, board), statusPanel, 0, 100, 800, 800);
+
+        // 5. 创建控制面板（把 statusPanel 和 boardPanel 都传进去）
+        this.controlPanel = new ControlPanel(statusPanel, boardPanel, 0, 900, 800, 100);
+
+        // 6. 添加面板
         this.add(this.statusPanel);
         this.add(this.controlPanel);
         this.add(boardPanel);
