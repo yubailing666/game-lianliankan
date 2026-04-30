@@ -76,8 +76,14 @@ public class Main {
             loginFrame.add(Account);
             loginFrame.add(Password);
             
-            String bgPath = System.getProperty("user.dir") + File.separator + "game-lianliankan" + File.separator + "resource" + File.separator + "background.png";
+            // 优先取项目目录下的 resource
+            String bgPath = System.getProperty("user.dir") + File.separator + "resource" + File.separator + "background.png";
             File bgFile = new File(bgPath);
+            if (!bgFile.exists()) {
+                // 备用：相对于项目根目录
+                bgPath = "D:" + File.separator + "game-lianliankan" + File.separator + "resource" + File.separator + "background.png";
+                bgFile = new File(bgPath);
+            }
             if (bgFile.exists()) {
                 JLabel backgroundLabel = new JLabel(new ImageIcon(bgPath));
                 backgroundLabel.setSize(400, 250);

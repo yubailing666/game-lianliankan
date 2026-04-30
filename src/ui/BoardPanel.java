@@ -70,12 +70,17 @@ public class BoardPanel extends JPanel {
         this.setPreferredSize(new Dimension(this.width, this.height));
         this.cellWidth = this.width / totalCol;
         this.cellHeight = this.height / totalRow;
-        File dir = new File("game-lianliankan" + File.separator + "resource");
+        File dir = new File("resource");
+        if (!dir.exists()) {
+            dir = new File("D:" + File.separator + "game-lianliankan" + File.separator + "resource");
+        }
         File[] files = dir.listFiles();
-        for (File file : files) {
-            if (file.getName().endsWith(".png")) {
-                ImageIcon icon = new ImageIcon(file.getPath());
-                imageList.add(icon.getImage());
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith(".png")) {
+                    ImageIcon icon = new ImageIcon(file.getPath());
+                    imageList.add(icon.getImage());
+                }
             }
         }
         this.addMouseListener(new MouseAdapter() {

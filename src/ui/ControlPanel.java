@@ -28,7 +28,7 @@ public class ControlPanel extends JPanel {
         startButton.setFocusPainted(false);
         this.add(startButton);
         this.startButton.addActionListener(e -> {
-            statusPanel.setStatus("RUN");
+            statusPanel.startGame();
         });
     }
 
