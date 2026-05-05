@@ -153,6 +153,9 @@ public class BoardPanel extends JPanel {
                 firstCell.setEmpty(true);
                 secondCell.setEmpty(true);
                 statusPanel.addScore(10);
+                if(gameBoard.isAllCleared()){
+                    JOptionPane.showMessageDialog(BoardPanel.this, "你赢了！");
+                }
                 firstCell.setChosen(false);
                 secondCell.setChosen(false);
                 lineVisible = false;

@@ -28,4 +28,17 @@ public class GameBoard {
             }
         }
     }
+    public boolean isAllCleared(){
+        boolean isCleared = true;
+        for(Cell[] i: board ){
+
+            for(Cell j: i){
+                if (!j.isEmpty()){
+                    isCleared =false;
+                }
+
+            }
+        }
+        return isCleared;
+    }
 }
