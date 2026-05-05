@@ -43,15 +43,10 @@ public class BoardPanel extends JPanel {
         }
         return new Position(row, col);
     }
-    public boolean isAdjacent(Position p1, Position p2) {
-        int dr = Math.abs(p1.getRow() - p2.getRow());
-        int dc = Math.abs(p1.getCol() - p2.getCol());
-        return dr + dc == 1;
-    }
 
-    public void showLine(Cell c1, Cell c2) {
+    public void showLine(List<Position> path) {
         lineList.clear();
-        lineList.add(new Line(c1, c2));
+        lineList.add(new Line(path));
         lineVisible = true;
         repaint();
     }
@@ -144,12 +139,13 @@ public class BoardPanel extends JPanel {
             return;
         }
 
-        if (isAdjacent(firstSelected, secondSelected)) {
+        if (utils.Utils.canLinkAB(gameBoard, firstSelected, secondSelected)) {
             secondCell.setChosen(true);
             repaint();
             animating = true;
-            showLine(firstCell, secondCell);
-            Timer timer = new Timer(300, e -> {
+            List<Position> path = utils.Utils.findPath(gameBoard, firstSelected, secondSelected);
+            showLine(path);
+            Timer timer = new Timer(200, e -> {
                 firstCell.setEmpty(true);
                 secondCell.setEmpty(true);
                 statusPanel.addScore(10);
@@ -175,6 +171,16 @@ public class BoardPanel extends JPanel {
             secondSelected = null;
             repaint();
         }
+    }
+    public void setGameBoard(GameBoard newBoard) {
+        this.gameBoard = newBoard;
+        this.totalRow = newBoard.getRowCnt();
+        this.totalCol = newBoard.getColCnt();
+        this.started = false;
+        this.firstSelected = null;
+        this.secondSelected = null;
+        this.lineList.clear();
+        repaint();
     }
     public Rectangle getRectangle(Position position) {
         int x = position.getCol() * cellWidth;
@@ -218,21 +224,19 @@ public class BoardPanel extends JPanel {
         g2.setStroke(new BasicStroke(3));
         if (lineVisible) {
             for (Line line: lineList) {
-                Rectangle rec1 = getRectangle(line.getCell1().getPos());
-                Rectangle rec2 = getRectangle(line.getCell2().getPos());
-                g.drawLine((int) rec1.getCenterPosition().getX(), (int) rec1.getCenterPosition().getY(), (int) rec2.getCenterPosition().getX(), (int) rec2.getCenterPosition().getY());
+                List<Position> path = line.getPath();
+                for (int i = 0; i < path.size()-1; i++) {
+                   Rectangle rec1 = getRectangle(path.get(i));
+                   Rectangle rec2 = getRectangle(path.get(i+1));
+                    g.drawLine(
+                            (int) rec1.getCenterPosition().getX(),
+                            (int) rec1.getCenterPosition().getY(),
+                            (int) rec2.getCenterPosition().getX(),
+                            (int) rec2.getCenterPosition().getY()
+                    );
+                }
+
             }
         }
-
-    }
-    public void setGameBoard(GameBoard newBoard) {
-        this.gameBoard = newBoard;
-        this.totalRow = newBoard.getRowCnt();
-        this.totalCol = newBoard.getColCnt();
-        this.started = false;
-        this.firstSelected = null;
-        this.secondSelected = null;
-        this.lineList.clear();
-        repaint();
     }
 }

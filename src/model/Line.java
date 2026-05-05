@@ -1,19 +1,15 @@
 package model;
 
+import java.util.List;
+
 public class Line {
-    Cell cell1;
-    Cell cell2;
+    List<Position> path;
 
-    public Line(Cell cell1, Cell cell2) {
-        this.cell1 = cell1;
-        this.cell2 = cell2;
+    public Line(List<Position> path) {
+        this.path = path;
     }
 
-    public Cell getCell1() {
-        return cell1;
-    }
-
-    public Cell getCell2() {
-        return cell2;
+    public List<Position> getPath(){
+        return path;
     }
 }

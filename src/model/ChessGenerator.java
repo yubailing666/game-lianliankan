@@ -2,11 +2,13 @@ package model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import utils.Utils;
 
 // 连连看棋子生成器，专门用于生成指定规格的成对棋子和棋盘
 public class ChessGenerator {
     private static final int DEFAULT_CHESS_TYPE_COUNT = 3;
     private static final int BORDER_ICON_INDEX = 0;
+    private static final int MAX_RETRY_COUNT = 100;
 
     // 生成棋盘（带默认棋子类型数）
     public Cell[][] generateChessBoard(int coreSize) {
@@ -24,22 +26,75 @@ public class ChessGenerator {
         }
 
         int totalSize = coreSize + 2; // 上下左右各加1行/列边框
-        Cell[][] board = new Cell[totalSize][totalSize];
+        
+        // 尝试生成有效棋盘，避免死局
+        for (int attempt = 0; attempt < MAX_RETRY_COUNT; attempt++) {
+            Cell[][] board = new Cell[totalSize][totalSize];
 
-        // 1. 初始化整个棋盘（先填充所有位置为默认值，避免空指针）
+            // 1. 初始化整个棋盘（先填充所有位置为默认值，避免空指针）
+            for (int i = 0; i < totalSize; i++) {
+                for (int j = 0; j < totalSize; j++) {
+                    board[i][j] = new Cell(new Position(i, j), true, BORDER_ICON_INDEX);
+                }
+            }
+
+            // 2. 初始化边框（复用原有逻辑，明确标记边框）
+            initBoardBorder(board, totalSize);
+
+            // 3. 填充核心区域棋子（关键修复：从1,1开始填充，避开边框）
+            fillCoreChess(board, coreSize, chessTypeCount);
+
+            // 4. 验证是否存在至少一个可消除的对子
+            if (hasValidPair(board, totalSize)) {
+                return board;
+            }
+        }
+
+        // 如果多次重试仍然失败，返回最后一次生成的棋盘
+        Cell[][] board = new Cell[totalSize][totalSize];
         for (int i = 0; i < totalSize; i++) {
             for (int j = 0; j < totalSize; j++) {
                 board[i][j] = new Cell(new Position(i, j), true, BORDER_ICON_INDEX);
             }
         }
-
-        // 2. 初始化边框（复用原有逻辑，明确标记边框）
         initBoardBorder(board, totalSize);
-
-        // 3. 填充核心区域棋子（关键修复：从1,1开始填充，避开边框）
         fillCoreChess(board, coreSize, chessTypeCount);
-
         return board;
+    }
+
+    // 检查棋盘是否存在至少一个可消除的对子
+    private boolean hasValidPair(Cell[][] board, int totalSize) {
+        List<Position> nonEmptyCells = new ArrayList<>();
+
+        // 收集所有非空单元格（只检查核心区域）
+        for (int i = 1; i <= totalSize - 2; i++) {
+            for (int j = 1; j <= totalSize - 2; j++) {
+                if (!board[i][j].isEmpty()) {
+                    nonEmptyCells.add(new Position(i, j));
+                }
+            }
+        }
+
+        // 创建临时 GameBoard 用于路径检测
+        GameBoard gameBoard = new GameBoard(totalSize, totalSize, board);
+
+        // 检查所有相同图标的对子是否可连接
+        for (int i = 0; i < nonEmptyCells.size(); i++) {
+            for (int j = i + 1; j < nonEmptyCells.size(); j++) {
+                Position posA = nonEmptyCells.get(i);
+                Position posB = nonEmptyCells.get(j);
+
+                // 图标相同且可以连接
+                if (board[posA.getRow()][posA.getCol()].getIconIndex() ==
+                    board[posB.getRow()][posB.getCol()].getIconIndex()) {
+                    if (Utils.canLinkAB(gameBoard, posA, posB)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     // 初始化棋盘边框（边框标记为isEmpty=true，图标索引0）
