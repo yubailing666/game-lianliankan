@@ -41,6 +41,14 @@ public class GameFrame extends JFrame {
         // 5. 创建控制面板（把 statusPanel 和 boardPanel 都传进去）
         this.controlPanel = new ControlPanel(statusPanel, boardPanel, 0, 900, 800, 100);
 
+        // ★ 重新开始逻辑
+        controlPanel.setOnRestart(() -> {
+            ChessGenerator gen = new ChessGenerator();
+            Cell[][] newBoard = gen.generateChessBoard(4);
+            boardPanel.setGameBoard(new GameBoard(6, 6, newBoard));
+            statusPanel.resetGame();
+        });
+
         // 6. 添加面板
         this.add(this.statusPanel);
         this.add(this.controlPanel);

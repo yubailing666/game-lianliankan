@@ -6,10 +6,15 @@ import java.awt.*;
 public class ControlPanel extends JPanel {
     StatusPanel statusPanel;
     JButton startButton;
+    JButton restartButton;          // ★ 新增
+    Runnable onRestart;
     int offSetX;
     int offSetY;
     int width;
-    int height;
+    int height;   public void setOnRestart(Runnable callback) {   // ★ 新增
+        this.onRestart = callback;
+    }
+
     public ControlPanel(StatusPanel statusPanel,BoardPanel boardPanel, int offSetX, int offSetY,int width, int height) {
         this.setLayout(null);
         this.setBounds(offSetX, offSetY, width, height);
@@ -31,6 +36,17 @@ public class ControlPanel extends JPanel {
             statusPanel.startGame();
             boardPanel.startGame();
         });
-    }
+        restartButton = new JButton("重新开始");
+        restartButton.setBounds(x + btnWidth + 20, y, btnWidth, btnHeight);
+        restartButton.setFont(new Font("Arial", Font.BOLD, 25));
+        this.add(restartButton);
+        restartButton.addActionListener(e -> {
+            if (onRestart != null) {
+                onRestart.run();
+            }
+        });
+
+        }
+
 
 }

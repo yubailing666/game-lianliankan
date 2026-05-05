@@ -49,6 +49,10 @@ public class StatusPanel extends JPanel {
             minutes = totalSeconds / 60;
             secondsUsed = countSeconds % 60;
             minutesUsed = countSeconds / 60;
+            if(totalSeconds==0){
+                timer.stop();
+                JOptionPane.showMessageDialog(null, "你输了！");
+            }//失败判定
             timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
             timecountLabel.setText(String.format("%02d:%02d", minutesUsed, secondsUsed));
         });
@@ -91,5 +95,15 @@ public class StatusPanel extends JPanel {
     public void addScore(int points) {
         score += points;
         scoreValue.setText(String.valueOf(score));
+    }
+    public void resetGame() {
+        totalSeconds = 120;
+        countSeconds = 0;
+        score = 0;
+        scoreValue.setText("0");
+        timeLabel.setText("02:00");
+        timecountLabel.setText("00:00");
+        statusLabel.setText("按 Start 开始");
+        timer.stop();
     }
 }

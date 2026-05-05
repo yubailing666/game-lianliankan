@@ -225,4 +225,14 @@ public class BoardPanel extends JPanel {
         }
 
     }
+    public void setGameBoard(GameBoard newBoard) {
+        this.gameBoard = newBoard;
+        this.totalRow = newBoard.getRowCnt();
+        this.totalCol = newBoard.getColCnt();
+        this.started = false;
+        this.firstSelected = null;
+        this.secondSelected = null;
+        this.lineList.clear();
+        repaint();
+    }
 }
