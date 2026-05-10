@@ -1,14 +1,17 @@
 package model;
 
+
 public class GameBoard {
     int rowCnt;
     int colCnt;
     Cell[][] board;
+    int totalPairs;
 
     public GameBoard(int rowCnt, int colCnt, Cell[][] border) {
         this.rowCnt = rowCnt;
         this.colCnt = colCnt;
         this.board = border;
+        this.totalPairs = countNonEmptyInnerCells()/2;
     }
 
     public int getRowCnt() {
@@ -29,16 +32,33 @@ public class GameBoard {
         }
     }
     public boolean isAllCleared(){
-        boolean isCleared = true;
-        for(Cell[] i: board ){
-
-            for(Cell j: i){
-                if (!j.isEmpty()){
-                    isCleared =false;
+        for (int i = 1; i < rowCnt - 1; i++) {
+            for (int j = 1; j < colCnt - 1; j++) {
+                if (!board[i][j].isEmpty()) {
+                    return false;
                 }
-
             }
         }
-        return isCleared;
+        return true;
+    }
+    public int getTotalPairs(){
+        return totalPairs;
+    }
+    public int getClearedPairs(){
+        return totalPairs - getRemainingPairs();
+    }
+    public int getRemainingPairs(){
+        return countNonEmptyInnerCells()/2;
+    }
+private int countNonEmptyInnerCells(){
+        int count = 0;
+        for(int i = 1; i < rowCnt-1; i++){
+            for (int j = 1; j < colCnt-1; j++) {
+                if(!board[i][j].isEmpty){
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }

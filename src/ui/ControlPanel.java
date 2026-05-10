@@ -35,6 +35,7 @@ public class ControlPanel extends JPanel {
         this.startButton.addActionListener(e -> {
             statusPanel.startGame();
             boardPanel.startGame();
+            boardPanel.refreshPairInfo();
         });
         restartButton = new JButton("重新开始");
         restartButton.setBounds(x + btnWidth + 20, y, btnWidth, btnHeight);

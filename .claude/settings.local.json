@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(javac -sourcepath src -cp src -d out/production/game-lianliankan-master src/app/Main.java)"
+    ]
+  }
+}

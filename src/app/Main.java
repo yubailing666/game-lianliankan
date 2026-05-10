@@ -99,7 +99,13 @@ public class Main {
                 String password = Password.getText();
                 if(validateUser(username, password)) {
                     loginFrame.dispose();
-                    GameFrame frame = new GameFrame("连连看", 800, 1000);
+                    String[] options = {"简单模式", "困难模式"};
+                    int choice = JOptionPane.showOptionDialog(null,
+                        "请选择游戏难度", "连连看",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                        null, options, options[0]);
+                    boolean isHardMode = (choice == 1);
+                    GameFrame frame = new GameFrame("连连看", 800, 1000, isHardMode);
                     frame.repaint();
                 }else{
                     JOptionPane.showMessageDialog(loginFrame, "账号或密码错误！");

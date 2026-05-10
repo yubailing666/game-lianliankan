@@ -1,5 +1,12 @@
-bin/
+# 编译输出
 out/
+*.class
+
+# IDE 配置
+*.iml
 .idea/
 *.iml
-user.txt
+
+# 其他
+*.log
+.DS_Store

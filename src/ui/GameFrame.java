@@ -5,7 +5,6 @@ import model.ChessGenerator;
 import model.GameBoard;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class GameFrame extends JFrame {
     int width;
@@ -13,16 +12,18 @@ public class GameFrame extends JFrame {
     String title;
     StatusPanel statusPanel;
     ControlPanel controlPanel;
+    boolean isHardMode;
 
-    public GameFrame(String title, int width, int height) {
+    public GameFrame(String title, int width, int height, boolean isHardMode) {
         super(title);
         this.setResizable(false);
+        this.isHardMode = isHardMode;
 
-        // 1. 初始化棋子生成器
+        // 1. 根据难度生成棋盘
         ChessGenerator chessGenerator = new ChessGenerator();
-        int coreSize = 4;
-        Cell[][] board = chessGenerator.generateChessBoard(coreSize);
-        int totalSize = coreSize + 2;
+        Cell[][] board = isHardMode ? chessGenerator.generateHardBoard() : chessGenerator.generateEasyBoard();
+        int totalRow = board.length;
+        int totalCol = board[0].length;
 
         // 2. 窗口基础设置
         this.title = title;
@@ -36,17 +37,20 @@ public class GameFrame extends JFrame {
         this.statusPanel = new StatusPanel(0, 0, 800, 100);
 
         // 4. 初始化棋盘面板（把 statusPanel 传进去）
-        BoardPanel boardPanel = new BoardPanel(new GameBoard(totalSize, totalSize, board), statusPanel, 0, 100, 800, 800);
+        BoardPanel boardPanel = new BoardPanel(new GameBoard(totalRow, totalCol, board), statusPanel, 0, 100, 800, 800);
 
         // 5. 创建控制面板（把 statusPanel 和 boardPanel 都传进去）
         this.controlPanel = new ControlPanel(statusPanel, boardPanel, 0, 900, 800, 100);
 
-        // ★ 重新开始逻辑
+        // ★ 重新开始逻辑（保持当前难度）
         controlPanel.setOnRestart(() -> {
             ChessGenerator gen = new ChessGenerator();
-            Cell[][] newBoard = gen.generateChessBoard(4);
-            boardPanel.setGameBoard(new GameBoard(6, 6, newBoard));
+            Cell[][] newBoard = isHardMode ? gen.generateHardBoard() : gen.generateEasyBoard();
+            int newRow = newBoard.length;
+            int newCol = newBoard[0].length;
+            boardPanel.setGameBoard(new GameBoard(newRow, newCol, newBoard));
             statusPanel.resetGame();
+            boardPanel.refreshPairInfo();
         });
 
         // 6. 添加面板
@@ -54,7 +58,7 @@ public class GameFrame extends JFrame {
         this.add(this.controlPanel);
         this.add(boardPanel);
 
-        // 5. 最后设置可见（修复原代码顺序问题）
+        // 7. 最后设置可见
         this.setVisible(true);
     }
 }

@@ -149,7 +149,9 @@ public class BoardPanel extends JPanel {
                 firstCell.setEmpty(true);
                 secondCell.setEmpty(true);
                 statusPanel.addScore(10);
+                refreshPairInfo();
                 if(gameBoard.isAllCleared()){
+                    statusPanel.winGame();
                     JOptionPane.showMessageDialog(BoardPanel.this, "你赢了！");
                 }
                 firstCell.setChosen(false);
@@ -238,5 +240,11 @@ public class BoardPanel extends JPanel {
 
             }
         }
+    }
+    public void refreshPairInfo(){
+        int totalPairs = gameBoard.getTotalPairs();
+        int clearedPairs = gameBoard.getClearedPairs();
+        int remainingPairs = gameBoard.getRemainingPairs();
+        statusPanel.updatePairInfo(remainingPairs, clearedPairs, totalPairs);
     }
 }
