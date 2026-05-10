@@ -50,6 +50,7 @@ public class GameFrame extends JFrame {
             int newCol = newBoard[0].length;
             boardPanel.setGameBoard(new GameBoard(newRow, newCol, newBoard));
             statusPanel.resetGame();
+            boardPanel.refreshPairInfo();
         });
 
         // 6. 添加面板

@@ -11,6 +11,8 @@ public class StatusPanel extends JPanel {
     JLabel timeuseLabel;
     JLabel timecountLabel;
     JLabel comboLabel;
+    JLabel remainingPairLabel;
+    JLabel progressLabel;
     Timer timer;
     Timer comboTimer;
     int totalSeconds;
@@ -86,7 +88,7 @@ public class StatusPanel extends JPanel {
             timecountLabel.setText(String.format("%02d:%02d", minutesUsed, secondsUsed));
         });
 
-        setLayout(new GridLayout(1, 3));
+        setLayout(new GridLayout(1, 4));
 
         JPanel left = new JPanel(new BorderLayout());
         left.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
@@ -110,10 +112,27 @@ public class StatusPanel extends JPanel {
         rightInner.add(timeuseLabel);
         rightInner.add(timecountLabel);
         right.add(rightInner);
+        
+        Font pairFont = new Font("Microsoft YaHei",Font.BOLD,18);
+        remainingPairLabel = new JLabel("剩余可消除：0对",SwingConstants.CENTER);
+        remainingPairLabel.setFont(pairFont);
+        progressLabel = new JLabel("关卡进度：0%",SwingConstants.CENTER);
+        progressLabel.setFont(pairFont);
+        JPanel pairPanel = new JPanel(new GridBagLayout());
+        JPanel pairInner = new JPanel(new GridLayout(2,1));
+        pairInner.add(remainingPairLabel);
+        pairInner.add(progressLabel);
+        pairPanel.add(pairInner);
 
         this.add(left);
         this.add(middle);
+        this.add(pairPanel);
         this.add(right);
+    }
+    public void updatePairInfo(int remainingPairs, int clearedPairs, int totalPairs){
+        remainingPairLabel.setText("剩余可消除：" + remainingPairs + "对");
+        int progress = clearedPairs * 100 / totalPairs;
+        progressLabel.setText("关卡进度: "+ progress + "%");
     }
     
     public void startGame() {
@@ -179,7 +198,9 @@ public class StatusPanel extends JPanel {
         timecountLabel.setText("00:00");
         statusLabel.setText("按 Start 开始");
         timer.stop();
-    }
+        remainingPairLabel.setText("剩余可消除: 0对");
+        progressLabel.setText("关卡进度: 0%");
+     }
     
     static class AnimationThread extends Thread {
         JLabel label;
