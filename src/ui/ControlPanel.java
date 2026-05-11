@@ -29,7 +29,7 @@ public class ControlPanel extends JPanel {
         this.offSetY = offSetY;
         this.width = width;
         this.height = height;
-        this.startButton = createStyledButton("▶ START", new Color(0xe8c87a), new Color(0x4a3d2e));
+        this.startButton = createStyledButton("> START", new Color(0xe8c87a), new Color(0x4a3d2e));
         this.statusPanel = statusPanel;
         int btnWidth = 150;
         int btnHeight = 50;
@@ -44,7 +44,7 @@ public class ControlPanel extends JPanel {
             boardPanel.refreshPairInfo();
         });
 
-        restartButton = createStyledButton("↺ RESTART", new Color(0x6b5b45), new Color(0xc4b091));
+        restartButton = createStyledButton("RESTART", new Color(0x6b5b45), new Color(0xc4b091));
         restartButton.setBounds(x + btnWidth + 20, y, btnWidth, btnHeight);
         this.add(restartButton);
         restartButton.addActionListener(e -> {
@@ -53,7 +53,7 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        settingsButton = createStyledButton("⚙ SETTINGS", new Color(0x5c4a3a), new Color(0xa09070));
+        settingsButton = createStyledButton("SETTINGS", new Color(0x5c4a3a), new Color(0xa09070));
         settingsButton.setBounds(x + 2 * (btnWidth + 20), y, btnWidth, btnHeight);
         this.add(settingsButton);
         settingsButton.addActionListener(e -> {
