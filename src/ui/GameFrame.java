@@ -39,7 +39,7 @@ public class GameFrame extends JFrame {
         // 4. 初始化棋盘面板（把 statusPanel 传进去）
         BoardPanel boardPanel = new BoardPanel(new GameBoard(totalRow, totalCol, board), statusPanel, 0, 100, 800, 800);
 
-        // 5. 创建控制面板（把 statusPanel 和 boardPanel 都传进去）
+        // 5. 创建控制面板
         this.controlPanel = new ControlPanel(statusPanel, boardPanel, 0, 900, 800, 100);
 
         // ★ 重新开始逻辑（保持当前难度）

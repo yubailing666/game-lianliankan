@@ -18,17 +18,42 @@ public class Main {
             JFrame loginFrame = new JFrame("Login");
             loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             loginFrame.setSize(400,250);
+            loginFrame.setLocationRelativeTo(null);
             loginFrame.setLayout(null);
 
 
             JTextField Account = new JTextField();
             Account.setText("请输入账号");
+            Account.addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent e) {
+                    if (Account.getText().equals("请输入账号")) {
+                        Account.setText("");
+                    }
+                }
+                public void focusLost(java.awt.event.FocusEvent e) {
+                    if (Account.getText().isEmpty()) {
+                        Account.setText("请输入账号");
+                    }
+                }
+            });
             Account.setSize(170,35);
             Account.setLocation(110,80);
             Account.setOpaque(false);
 
             JTextField Password = new JTextField();
             Password.setText("请输入密码");
+            Password.addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent e) {
+                    if (Password.getText().equals("请输入密码")) {
+                        Password.setText("");
+                    }
+                }
+                public void focusLost(java.awt.event.FocusEvent e) {
+                    if (Password.getText().isEmpty()) {
+                        Password.setText("请输入密码");
+                    }
+                }
+            });
             Password.setSize(170,35);
             Password.setLocation(110,115);
             Password.setOpaque(false);

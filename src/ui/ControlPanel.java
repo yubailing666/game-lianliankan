@@ -6,16 +6,21 @@ import java.awt.*;
 public class ControlPanel extends JPanel {
     StatusPanel statusPanel;
     JButton startButton;
-    JButton restartButton;          // ★ 新增
+    JButton restartButton;
+    JButton settingsButton;
     Runnable onRestart;
     int offSetX;
     int offSetY;
     int width;
-    int height;   public void setOnRestart(Runnable callback) {   // ★ 新增
+    int height;
+    int currentTimeLimit = 120;
+    int currentCoreSize = 4;
+
+    public void setOnRestart(Runnable callback) {
         this.onRestart = callback;
     }
 
-    public ControlPanel(StatusPanel statusPanel,BoardPanel boardPanel, int offSetX, int offSetY,int width, int height) {
+    public ControlPanel(StatusPanel statusPanel, BoardPanel boardPanel, int offSetX, int offSetY, int width, int height) {
         this.setLayout(null);
         this.setBounds(offSetX, offSetY, width, height);
         this.offSetX = offSetX;
@@ -26,8 +31,9 @@ public class ControlPanel extends JPanel {
         this.statusPanel = statusPanel;
         int btnWidth = 150;
         int btnHeight = 50;
-        int x = (width - btnWidth) / 2;
+        int x = (width - btnWidth * 3 - 40) / 2;
         int y = (height - btnHeight) / 2;
+
         startButton.setBounds(x, y, btnWidth, btnHeight);
         startButton.setFont(new Font("Arial", Font.BOLD, 25));
         startButton.setFocusPainted(false);
@@ -37,7 +43,8 @@ public class ControlPanel extends JPanel {
             boardPanel.startGame();
             boardPanel.refreshPairInfo();
         });
-        restartButton = new JButton("重新开始");
+
+        restartButton = new JButton("RESTART");
         restartButton.setBounds(x + btnWidth + 20, y, btnWidth, btnHeight);
         restartButton.setFont(new Font("Arial", Font.BOLD, 25));
         this.add(restartButton);
@@ -47,7 +54,25 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        }
+        settingsButton = new JButton("Settings");
+        settingsButton.setBounds(x + 2 * (btnWidth + 20), y, btnWidth, btnHeight);
+        settingsButton.setFont(new Font("Arial", Font.BOLD, 25));
+        this.add(settingsButton);
+        settingsButton.addActionListener(e -> {
+            SettingsDialog dlg = new SettingsDialog(
+                    (JFrame) SwingUtilities.getWindowAncestor(this),
+                    currentTimeLimit,
+                    currentCoreSize
+            );
+            dlg.setVisible(true);
 
-
+            if (dlg.isRestartRequested()) {
+                currentTimeLimit = dlg.getSelectedTimeSeconds();
+                currentCoreSize = dlg.getSelectedCoreSize();
+                if (onRestart != null) {
+                    onRestart.run();
+                }
+            }
+        });
+    }
 }
