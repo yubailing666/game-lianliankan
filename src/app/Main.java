@@ -7,7 +7,7 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new GameFrame("连连看", 800, 1000);
+            new GameFrame("连连看", 1000, 1000);
         });
     }
 }

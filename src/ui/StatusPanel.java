@@ -32,16 +32,15 @@ public class StatusPanel extends JPanel {
         setBackground(new Color(0x5c4a3a));
         setOpaque(true);
 
-        Font cjkFont = new Font("Microsoft YaHei", Font.BOLD, 16);
-        Font numFont = new Font("Arial", Font.BOLD, 48);
-        Font scoreNumFont = new Font("Arial", Font.BOLD, 28);
-        Font comboFont = new Font("Microsoft YaHei", Font.BOLD, 16);
+        Font cjkFont = new Font("Microsoft YaHei", Font.PLAIN, 13);
+        Font numFont = new Font("Arial", Font.BOLD, 28);
+        Font comboFont = new Font("Microsoft YaHei", Font.BOLD, 14);
 
         scoreLabel = new JLabel("分数", SwingConstants.CENTER);
         scoreLabel.setFont(cjkFont);
         scoreLabel.setForeground(new Color(0xa09070));
         scoreValue = new JLabel("0", SwingConstants.CENTER);
-        scoreValue.setFont(scoreNumFont);
+        scoreValue.setFont(numFont);
         scoreValue.setForeground(new Color(0xe8c87a));
 
         statusLabel = new JLabel("剩余时间", SwingConstants.CENTER);
@@ -56,7 +55,7 @@ public class StatusPanel extends JPanel {
         timeuseLabel.setForeground(new Color(0xa09070));
         timecountLabel = new JLabel("00:00", SwingConstants.CENTER);
         timecountLabel.setFont(numFont);
-        timecountLabel.setForeground(new Color(0x8a7a65));
+        timecountLabel.setForeground(new Color(0xc4b091));
 
         comboLabel = new JLabel("", SwingConstants.CENTER);
         comboLabel.setFont(comboFont);
@@ -126,7 +125,7 @@ public class StatusPanel extends JPanel {
         rightInner.add(timecountLabel);
         right.add(rightInner);
         
-        Font pairFont = new Font("Microsoft YaHei",Font.BOLD,18);
+        Font pairFont = new Font("Microsoft YaHei",Font.PLAIN,12);
         remainingPairLabel = new JLabel("剩余可消除：0对",SwingConstants.CENTER);
         remainingPairLabel.setFont(pairFont);
         remainingPairLabel.setForeground(new Color(0xf5e6c8));

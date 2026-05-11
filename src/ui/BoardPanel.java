@@ -25,6 +25,7 @@ public class BoardPanel extends JPanel {
     boolean lineVisible;
     int width;
     Runnable onWinCallback;
+    Runnable onFishFeed;
     int height;
     int cellWidth;
     int cellHeight;
@@ -34,6 +35,9 @@ public class BoardPanel extends JPanel {
     boolean started;
     public void setOnWinCallback(Runnable callback){
         this.onWinCallback = callback;
+    }
+    public void setOnFishFeed(Runnable callback){
+        this.onFishFeed = callback;
     }
     public void startGame(){
         started =true;

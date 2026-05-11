@@ -4,9 +4,6 @@ import model.*;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * 游戏主页面 — 棋盘 + 状态栏 + 控制栏 + 排行榜 + 猫侧栏
- */
 public class GamePanel extends JPanel {
 
     private BoardPanel boardPanel;
@@ -19,35 +16,30 @@ public class GamePanel extends JPanel {
     public GamePanel(boolean isHardMode, LeaderBoard leaderBoard, String username) {
         this.isHardMode = isHardMode;
         this.username = username;
+        setLayout(null);
         setBackground(new Color(0x6b5b45));
-        setLayout(new BorderLayout());
 
-        // ── 左侧游戏区 ──
-        JPanel gameArea = new JPanel(null);
-        gameArea.setOpaque(false);
-
+        // 生成棋盘
         ChessGenerator gen = new ChessGenerator();
         Cell[][] board = isHardMode ? gen.generateHardBoard() : gen.generateEasyBoard();
         int totalRow = board.length;
         int totalCol = board[0].length;
 
+        // 游戏区 (左 800px)
         statusPanel = new StatusPanel(0, 0, 800, 100);
         boardPanel = new BoardPanel(new GameBoard(totalRow, totalCol, board), statusPanel, 0, 100, 800, 800);
         controlPanel = new ControlPanel(statusPanel, boardPanel, 0, 900, 800, 100);
 
-        gameArea.add(statusPanel);
-        gameArea.add(boardPanel);
-        gameArea.add(controlPanel);
-
-        // ── 右侧猫栏 ──
+        // 猫侧栏 (右 200px)
         catPanel = new CatPanel();
+        catPanel.setBounds(800, 0, 200, 1000);
 
-        add(gameArea, BorderLayout.CENTER);
-        add(catPanel, BorderLayout.EAST);
+        add(statusPanel);
+        add(boardPanel);
+        add(controlPanel);
+        add(catPanel);
 
-        // ── 回调 ──
-
-        // 重新开始
+        // 回调
         controlPanel.setOnRestart(() -> {
             ChessGenerator gen2 = new ChessGenerator();
             Cell[][] newBoard = isHardMode ? gen2.generateHardBoard() : gen2.generateEasyBoard();
@@ -58,16 +50,13 @@ public class GamePanel extends JPanel {
             boardPanel.refreshPairInfo();
         });
 
-        // 消除一对 → 喂猫
         boardPanel.setOnFishFeed(() -> catPanel.feedFish());
 
-        // 排行榜按钮
         controlPanel.setOnLeaderBoard(() -> {
             LeaderBoardPanel panel = new LeaderBoardPanel(null, leaderBoard);
             panel.setVisible(true);
         });
 
-        // 胜利时记录排行榜
         boardPanel.setOnWinCallback(() -> {
             String mode = isHardMode ? "困难模式" : "简单模式";
             LeaderRecord record = new LeaderRecord(username, mode, statusPanel.getScore(), statusPanel.getTimeUsed());
