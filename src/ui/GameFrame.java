@@ -1,5 +1,7 @@
 package ui;
 
+import model.LeaderBoard;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,8 +12,8 @@ import java.awt.*;
 public class GameFrame extends JFrame {
 
     private CardLayout cardLayout;
-    private String[] pageNames = {"splash", "login", "game"};
     private boolean gameAdded = false;
+    private LeaderBoard leaderBoard;
 
     public GameFrame(String title, int width, int height) {
         super(title);
@@ -20,6 +22,7 @@ public class GameFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        leaderBoard = new LeaderBoard();
         cardLayout = new CardLayout();
         setLayout(cardLayout);
 
@@ -31,9 +34,9 @@ public class GameFrame extends JFrame {
     }
 
     /** 登录后调这个，创建游戏页并跳过去 */
-    public void startGame(boolean isHardMode) {
+    public void startGame(String username, boolean isHardMode) {
         if (!gameAdded) {
-            add(new GamePanel(isHardMode), "game");
+            add(new GamePanel(isHardMode, leaderBoard, username), "game");
             gameAdded = true;
         }
         showPage("game");

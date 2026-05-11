@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * 游戏主页面 — 把原来 GameFrame 里的游戏内容搬到这里
+ * 游戏主页面 — 棋盘 + 状态栏 + 控制栏 + 排行榜
  */
 public class GamePanel extends JPanel {
 
@@ -13,9 +13,13 @@ public class GamePanel extends JPanel {
     private BoardPanel boardPanel;
     private ControlPanel controlPanel;
     private boolean isHardMode;
+    private LeaderBoard leaderBoard;
+    private String username;
 
-    public GamePanel(boolean isHardMode) {
+    public GamePanel(boolean isHardMode, LeaderBoard leaderBoard, String username) {
         this.isHardMode = isHardMode;
+        this.leaderBoard = leaderBoard;
+        this.username = username;
         setLayout(null);
         setBackground(new Color(0x6b5b45));
 
@@ -39,6 +43,19 @@ public class GamePanel extends JPanel {
             boardPanel.setGameBoard(new GameBoard(newRow, newCol, newBoard));
             statusPanel.resetGame();
             boardPanel.refreshPairInfo();
+        });
+
+        // 4. 排行榜按钮
+        controlPanel.setOnLeaderBoard(() -> {
+            LeaderBoardPanel panel = new LeaderBoardPanel(null, leaderBoard);
+            panel.setVisible(true);
+        });
+
+        // 5. 胜利时记录排行榜
+        boardPanel.setOnWinCallback(() -> {
+            String mode = isHardMode ? "困难模式" : "简单模式";
+            LeaderRecord record = new LeaderRecord(username, mode, statusPanel.getScore(), statusPanel.getTimeUsed());
+            leaderBoard.addRecord(record);
         });
 
         add(statusPanel);

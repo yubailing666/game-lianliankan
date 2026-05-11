@@ -146,6 +146,12 @@ public class StatusPanel extends JPanel {
         this.add(pairPanel);
         this.add(right);
     }
+    public int getScore(){
+        return score;
+    }
+    public int getTimeUsed(){
+        return countSeconds;
+    }
     public void updatePairInfo(int remainingPairs, int clearedPairs, int totalPairs){
         remainingPairLabel.setText("剩余可消除：" + remainingPairs + "对");
         int progress = clearedPairs * 100 / totalPairs;

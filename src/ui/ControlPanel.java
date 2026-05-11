@@ -8,7 +8,9 @@ public class ControlPanel extends JPanel {
     JButton startButton;
     JButton restartButton;
     JButton settingsButton;
+    JButton leaderBoardBtn;
     Runnable onRestart;
+    Runnable onLeaderBoard;
     int offSetX;
     int offSetY;
     int width;
@@ -18,6 +20,10 @@ public class ControlPanel extends JPanel {
 
     public void setOnRestart(Runnable callback) {
         this.onRestart = callback;
+    }
+
+    public void setOnLeaderBoard(Runnable callback) {
+        this.onLeaderBoard = callback;
     }
 
     public ControlPanel(StatusPanel statusPanel, BoardPanel boardPanel, int offSetX, int offSetY, int width, int height) {
@@ -31,9 +37,11 @@ public class ControlPanel extends JPanel {
         this.height = height;
         this.startButton = createStyledButton("> START", new Color(0xe8c87a), new Color(0x4a3d2e));
         this.statusPanel = statusPanel;
-        int btnWidth = 150;
-        int btnHeight = 50;
-        int x = (width - btnWidth * 3 - 40) / 2;
+        int btnWidth = 130;
+        int btnHeight = 40;
+        int gap = 12;
+        int totalW = btnWidth * 4 + gap * 3;
+        int x = (width - totalW) / 2;
         int y = (height - btnHeight) / 2;
 
         startButton.setBounds(x, y, btnWidth, btnHeight);
@@ -45,38 +53,38 @@ public class ControlPanel extends JPanel {
         });
 
         restartButton = createStyledButton("RESTART", new Color(0x6b5b45), new Color(0xc4b091));
-        restartButton.setBounds(x + btnWidth + 20, y, btnWidth, btnHeight);
+        restartButton.setBounds(x + btnWidth + gap, y, btnWidth, btnHeight);
         this.add(restartButton);
         restartButton.addActionListener(e -> {
-            if (onRestart != null) {
-                onRestart.run();
-            }
+            if (onRestart != null) onRestart.run();
         });
 
         settingsButton = createStyledButton("SETTINGS", new Color(0x5c4a3a), new Color(0xa09070));
-        settingsButton.setBounds(x + 2 * (btnWidth + 20), y, btnWidth, btnHeight);
+        settingsButton.setBounds(x + 2 * (btnWidth + gap), y, btnWidth, btnHeight);
         this.add(settingsButton);
         settingsButton.addActionListener(e -> {
             SettingsDialog dlg = new SettingsDialog(
                     (JFrame) SwingUtilities.getWindowAncestor(this),
-                    currentTimeLimit,
-                    currentCoreSize
-            );
+                    currentTimeLimit, currentCoreSize);
             dlg.setVisible(true);
-
             if (dlg.isRestartRequested()) {
                 currentTimeLimit = dlg.getSelectedTimeSeconds();
                 currentCoreSize = dlg.getSelectedCoreSize();
-                if (onRestart != null) {
-                    onRestart.run();
-                }
+                if (onRestart != null) onRestart.run();
             }
+        });
+
+        leaderBoardBtn = createStyledButton("RANK", new Color(0x4a3d2e), new Color(0xe8c87a));
+        leaderBoardBtn.setBounds(x + 3 * (btnWidth + gap), y, btnWidth, btnHeight);
+        this.add(leaderBoardBtn);
+        leaderBoardBtn.addActionListener(e -> {
+            if (onLeaderBoard != null) onLeaderBoard.run();
         });
     }
 
     private JButton createStyledButton(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
-        btn.setFont(new Font("Arial", Font.BOLD, 14));
+        btn.setFont(new Font("Arial", Font.BOLD, 12));
         btn.setBackground(bg);
         btn.setForeground(fg);
         btn.setFocusPainted(false);
