@@ -105,7 +105,7 @@ public class Main {
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
                         null, options, options[0]);
                     boolean isHardMode = (choice == 1);
-                    GameFrame frame = new GameFrame("连连看", 800, 1000, isHardMode);
+                    GameFrame frame = new GameFrame("连连看", 800, 1000, isHardMode, username);
                     frame.repaint();
                 }else{
                     JOptionPane.showMessageDialog(loginFrame, "账号或密码错误！");

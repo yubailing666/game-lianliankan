@@ -3,6 +3,8 @@ package ui;
 import model.Cell;
 import model.ChessGenerator;
 import model.GameBoard;
+import model.LeaderBoard;
+import model.LeaderRecord;
 
 import javax.swing.*;
 
@@ -13,11 +15,15 @@ public class GameFrame extends JFrame {
     StatusPanel statusPanel;
     ControlPanel controlPanel;
     boolean isHardMode;
+    String username;
+    LeaderBoard leaderBoard;
 
-    public GameFrame(String title, int width, int height, boolean isHardMode) {
+    public GameFrame(String title, int width, int height, boolean isHardMode, String username) {
         super(title);
         this.setResizable(false);
         this.isHardMode = isHardMode;
+        this.username = username;
+        this.leaderBoard = new LeaderBoard();
 
         // 1. 根据难度生成棋盘
         ChessGenerator chessGenerator = new ChessGenerator();
@@ -38,7 +44,11 @@ public class GameFrame extends JFrame {
 
         // 4. 初始化棋盘面板（把 statusPanel 传进去）
         BoardPanel boardPanel = new BoardPanel(new GameBoard(totalRow, totalCol, board), statusPanel, 0, 100, 800, 800);
-
+        boardPanel.setOnWinCallback(() -> {
+            String mode = isHardMode ? "困难模式" : "简单模式";
+            LeaderRecord record = new LeaderRecord(username, mode, statusPanel.getScore(), statusPanel.getTimeUsed());
+            leaderBoard.addRecord(record);
+        });
         // 5. 创建控制面板（把 statusPanel 和 boardPanel 都传进去）
         this.controlPanel = new ControlPanel(statusPanel, boardPanel, 0, 900, 800, 100);
 
@@ -51,6 +61,12 @@ public class GameFrame extends JFrame {
             boardPanel.setGameBoard(new GameBoard(newRow, newCol, newBoard));
             statusPanel.resetGame();
             boardPanel.refreshPairInfo();
+        });
+
+        // ★ 排行榜按钮
+        controlPanel.setOnLeaderBoard(() -> {
+            LeaderBoardPanel panel = new LeaderBoardPanel(GameFrame.this, leaderBoard);
+            panel.setVisible(true);
         });
 
         // 6. 添加面板

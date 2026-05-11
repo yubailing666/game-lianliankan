@@ -24,6 +24,7 @@ public class BoardPanel extends JPanel {
     int totalCol;
     boolean lineVisible;
     int width;
+    Runnable onWinCallback;
     int height;
     int cellWidth;
     int cellHeight;
@@ -31,6 +32,9 @@ public class BoardPanel extends JPanel {
     Position secondSelected = null;
     boolean animating = false;
     boolean started;
+    public void setOnWinCallback(Runnable callback){
+        this.onWinCallback = callback;
+    }
     public void startGame(){
         started =true;
     }
@@ -152,6 +156,9 @@ public class BoardPanel extends JPanel {
                 refreshPairInfo();
                 if(gameBoard.isAllCleared()){
                     statusPanel.winGame();
+                    if (onWinCallback != null) {
+                        onWinCallback.run();
+                    }
                     JOptionPane.showMessageDialog(BoardPanel.this, "你赢了！");
                 }
                 firstCell.setChosen(false);
