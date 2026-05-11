@@ -23,11 +23,13 @@ public class ControlPanel extends JPanel {
     public ControlPanel(StatusPanel statusPanel, BoardPanel boardPanel, int offSetX, int offSetY, int width, int height) {
         this.setLayout(null);
         this.setBounds(offSetX, offSetY, width, height);
+        setBackground(new Color(0x5c4a3a));
+        setOpaque(true);
         this.offSetX = offSetX;
         this.offSetY = offSetY;
         this.width = width;
         this.height = height;
-        this.startButton = new JButton("start");
+        this.startButton = createStyledButton("▶ START", new Color(0xe8c87a), new Color(0x4a3d2e));
         this.statusPanel = statusPanel;
         int btnWidth = 150;
         int btnHeight = 50;
@@ -35,8 +37,6 @@ public class ControlPanel extends JPanel {
         int y = (height - btnHeight) / 2;
 
         startButton.setBounds(x, y, btnWidth, btnHeight);
-        startButton.setFont(new Font("Arial", Font.BOLD, 25));
-        startButton.setFocusPainted(false);
         this.add(startButton);
         this.startButton.addActionListener(e -> {
             statusPanel.startGame();
@@ -44,9 +44,8 @@ public class ControlPanel extends JPanel {
             boardPanel.refreshPairInfo();
         });
 
-        restartButton = new JButton("RESTART");
+        restartButton = createStyledButton("↺ RESTART", new Color(0x6b5b45), new Color(0xc4b091));
         restartButton.setBounds(x + btnWidth + 20, y, btnWidth, btnHeight);
-        restartButton.setFont(new Font("Arial", Font.BOLD, 25));
         this.add(restartButton);
         restartButton.addActionListener(e -> {
             if (onRestart != null) {
@@ -54,9 +53,8 @@ public class ControlPanel extends JPanel {
             }
         });
 
-        settingsButton = new JButton("Settings");
+        settingsButton = createStyledButton("⚙ SETTINGS", new Color(0x5c4a3a), new Color(0xa09070));
         settingsButton.setBounds(x + 2 * (btnWidth + 20), y, btnWidth, btnHeight);
-        settingsButton.setFont(new Font("Arial", Font.BOLD, 25));
         this.add(settingsButton);
         settingsButton.addActionListener(e -> {
             SettingsDialog dlg = new SettingsDialog(
@@ -74,5 +72,17 @@ public class ControlPanel extends JPanel {
                 }
             }
         });
+    }
+
+    private JButton createStyledButton(String text, Color bg, Color fg) {
+        JButton btn = new JButton(text);
+        btn.setFont(new Font("Arial", Font.BOLD, 14));
+        btn.setBackground(bg);
+        btn.setForeground(fg);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return btn;
     }
 }

@@ -62,6 +62,8 @@ public class BoardPanel extends JPanel {
         this.offSetX = offSetX;
         this.offSetY = offSetY;
         this.setBounds(offSetX, offSetY, width, height);
+        setBackground(new Color(0x6b5b45));
+        setOpaque(true);
         this.totalRow = gameBoard.getRowCnt();
         this.totalCol = gameBoard.getColCnt();
         this.width = width;

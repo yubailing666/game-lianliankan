@@ -29,6 +29,8 @@ public class StatusPanel extends JPanel {
 
     public StatusPanel(int offSetX, int offSetY, int width, int height) {
         this.setBounds(offSetX, offSetY, width, height);
+        setBackground(new Color(0x5c4a3a));
+        setOpaque(true);
 
         Font cjkFont = new Font("Microsoft YaHei", Font.BOLD, 16);
         Font numFont = new Font("Arial", Font.BOLD, 48);
@@ -37,18 +39,24 @@ public class StatusPanel extends JPanel {
 
         scoreLabel = new JLabel("分数", SwingConstants.CENTER);
         scoreLabel.setFont(cjkFont);
+        scoreLabel.setForeground(new Color(0xa09070));
         scoreValue = new JLabel("0", SwingConstants.CENTER);
         scoreValue.setFont(scoreNumFont);
+        scoreValue.setForeground(new Color(0xe8c87a));
 
         statusLabel = new JLabel("剩余时间", SwingConstants.CENTER);
         statusLabel.setFont(cjkFont);
+        statusLabel.setForeground(new Color(0xa09070));
         timeLabel = new JLabel("00:00", SwingConstants.CENTER);
         timeLabel.setFont(numFont);
+        timeLabel.setForeground(new Color(0xf5e6c8));
 
         timeuseLabel = new JLabel("已经用时", SwingConstants.CENTER);
         timeuseLabel.setFont(cjkFont);
+        timeuseLabel.setForeground(new Color(0xa09070));
         timecountLabel = new JLabel("00:00", SwingConstants.CENTER);
         timecountLabel.setFont(numFont);
+        timecountLabel.setForeground(new Color(0x8a7a65));
 
         comboLabel = new JLabel("", SwingConstants.CENTER);
         comboLabel.setFont(comboFont);
@@ -91,6 +99,7 @@ public class StatusPanel extends JPanel {
         setLayout(new GridLayout(1, 4));
 
         JPanel left = new JPanel(new BorderLayout());
+        left.setBackground(new Color(0x5c4a3a));
         left.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
 
         JPanel scoreBox = new JPanel(new BorderLayout());
@@ -102,13 +111,17 @@ public class StatusPanel extends JPanel {
         left.add(comboLabel, BorderLayout.SOUTH);
 
         JPanel middle = new JPanel(new GridBagLayout());
+        middle.setBackground(new Color(0x5c4a3a));
         JPanel middleInner = new JPanel(new GridLayout(2, 1));
+        middleInner.setBackground(new Color(0x5c4a3a));
         middleInner.add(statusLabel);
         middleInner.add(timeLabel);
         middle.add(middleInner);
 
         JPanel right = new JPanel(new GridBagLayout());
+        right.setBackground(new Color(0x5c4a3a));
         JPanel rightInner = new JPanel(new GridLayout(2, 1));
+        rightInner.setBackground(new Color(0x5c4a3a));
         rightInner.add(timeuseLabel);
         rightInner.add(timecountLabel);
         right.add(rightInner);
@@ -116,10 +129,14 @@ public class StatusPanel extends JPanel {
         Font pairFont = new Font("Microsoft YaHei",Font.BOLD,18);
         remainingPairLabel = new JLabel("剩余可消除：0对",SwingConstants.CENTER);
         remainingPairLabel.setFont(pairFont);
+        remainingPairLabel.setForeground(new Color(0xf5e6c8));
         progressLabel = new JLabel("关卡进度：0%",SwingConstants.CENTER);
         progressLabel.setFont(pairFont);
+        progressLabel.setForeground(new Color(0xf5e6c8));
         JPanel pairPanel = new JPanel(new GridBagLayout());
+        pairPanel.setBackground(new Color(0x5c4a3a));
         JPanel pairInner = new JPanel(new GridLayout(2,1));
+        pairInner.setBackground(new Color(0x5c4a3a));
         pairInner.add(remainingPairLabel);
         pairInner.add(progressLabel);
         pairPanel.add(pairInner);
