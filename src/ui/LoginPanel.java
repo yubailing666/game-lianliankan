@@ -116,8 +116,14 @@ public class LoginPanel extends JPanel {
             String username = accountField.getText();
             String password = passwordField.getText();
             if (validateUser(username, password)) {
-                // 登录成功 → 切到游戏
-                parent.showPage("game");
+                // 登录成功 → 选难度 → 进游戏
+                String[] options = {"简单模式", "困难模式"};
+                int choice = JOptionPane.showOptionDialog(this,
+                        "选择游戏难度", "连连看",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                        null, options, options[0]);
+                boolean isHardMode = (choice == 1);
+                parent.startGame(isHardMode);
             } else {
                 JOptionPane.showMessageDialog(this, "账号或密码错误！");
             }
