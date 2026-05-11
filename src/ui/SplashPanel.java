@@ -1,5 +1,6 @@
 package ui;
 
+import utils.MusicManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -22,11 +23,14 @@ public class SplashPanel extends JPanel implements ActionListener {
         setLayout(new BorderLayout());
         setBackground(new Color(0x5c4a3a));
 
+        MusicManager.play("splash");
+
         timer = new Timer(16, this);
         timer.start();
 
         addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+                MusicManager.play("login");  // 等 splash 播完再切
                 parent.showPage("login");
             }
         });

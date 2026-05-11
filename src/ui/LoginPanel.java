@@ -1,5 +1,6 @@
 package ui;
 
+import utils.MusicManager;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -123,6 +124,7 @@ public class LoginPanel extends JPanel {
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
                         null, options, options[0]);
                 boolean isHardMode = (choice == 1);
+                MusicManager.play("game");  // 等 login 播完再切
                 parent.startGame(username, isHardMode);
             } else {
                 JOptionPane.showMessageDialog(this, "账号或密码错误！");

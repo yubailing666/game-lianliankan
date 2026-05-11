@@ -1,6 +1,7 @@
 package ui;
 
 import model.LeaderBoard;
+import utils.MusicManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,11 @@ public class GameFrame extends JFrame {
         setSize(width, height);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                MusicManager.stop();
+            }
+        });
         setLocationRelativeTo(null);
 
         leaderBoard = new LeaderBoard();
