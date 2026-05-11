@@ -155,6 +155,7 @@ public class BoardPanel extends JPanel {
                 firstCell.setEmpty(true);
                 secondCell.setEmpty(true);
                 statusPanel.addScore(10);
+                if (onFishFeed != null) onFishFeed.run();
                 refreshPairInfo();
                 if(gameBoard.isAllCleared()){
                     statusPanel.winGame();
