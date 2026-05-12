@@ -2,85 +2,84 @@ package ui;
 
 import model.*;
 import model.Rectangle;
+import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 棋盘渲染与交互面板 — 游戏的核心显示区域
+ *
+ * 职责：
+ *   - 从 resource/ 目录加载棋子图片
+ *   - 绘制棋盘网格（含选中高亮、格子边框）
+ *   - 处理鼠标点击选择与消除判定
+ *   - 消除成功后绘制连接线动画（200ms）
+ *   - 胜利检测与回调触发
+ */
 public class BoardPanel extends JPanel {
+
+    // ── 布局参数 ──
     int offSetX;
     int offSetY;
-
-    List<Image> imageList = new ArrayList<>();
-    GameBoard gameBoard;
-    StatusPanel statusPanel;
-    List<Line> lineList = new ArrayList<>();
-    int totalRow;
-    int totalCol;
-    boolean lineVisible;
     int width;
-    Runnable onWinCallback;
-    Runnable onFishFeed;
     int height;
     int cellWidth;
     int cellHeight;
-    Position firstSelected = null;
-    Position secondSelected = null;
-    boolean animating = false;
-    boolean started;
-    public void setOnWinCallback(Runnable callback){
-        this.onWinCallback = callback;
-    }
-    public void setOnFishFeed(Runnable callback){
-        this.onFishFeed = callback;
-    }
-    public void startGame(){
-        started =true;
-    }
-    public Position getPositionByPoint(int x, int y) {
 
-        int col = x / cellWidth;
-        int row = y / cellHeight;
-        if (row < 0 || row >= totalRow || col < 0 || col >= totalCol) {
-            return null;
-        }
-        return new Position(row, col);
-    }
+    // ── 棋盘数据 ──
+    GameBoard gameBoard;
+    int totalRow;
+    int totalCol;
 
-    public void showLine(List<Position> path) {
-        lineList.clear();
-        lineList.add(new Line(path));
-        lineVisible = true;
-        repaint();
-    }
+    // ── 图片资源 ──
+    List<Image> imageList = new ArrayList<>();
 
-    public void clearLine() {
-        lineVisible = false;
-        lineList.clear();
-        repaint();
-    }
+    // ── 游戏状态 ──
+    StatusPanel statusPanel;
+    boolean started;                    // 是否已开始（START 按钮控制）
+    boolean animating;                  // 是否正在播放消除动画
+    Position firstSelected = null;      // 第一次点击选中的位置
+    Position secondSelected = null;     // 第二次点击选中的位置
 
-    public BoardPanel(GameBoard gameBoard, StatusPanel statusPanel, int offSetX, int offSetY,int width, int height) {
+    // ── 连接线绘制 ──
+    List<Line> lineList = new ArrayList<>();
+    boolean lineVisible;
+
+    // ── 回调 ──
+    Runnable onWinCallback;
+    Runnable onFishFeed;
+
+    // ════════════════════════════════════════════════════
+    // 构造与初始化
+    // ════════════════════════════════════════════════════
+
+    public BoardPanel(GameBoard gameBoard, StatusPanel statusPanel,
+                      int offSetX, int offSetY, int width, int height) {
         this.statusPanel = statusPanel;
         this.offSetX = offSetX;
         this.offSetY = offSetY;
-        this.setBounds(offSetX, offSetY, width, height);
+
+        setBounds(offSetX, offSetY, width, height);
         setBackground(new Color(0x6b5b45));
         setOpaque(true);
+
         this.totalRow = gameBoard.getRowCnt();
         this.totalCol = gameBoard.getColCnt();
         this.width = width;
         this.height = height;
-        this.setLayout(new GridLayout(this.totalRow, this.totalCol));
         this.gameBoard = gameBoard;
-        this.setPreferredSize(new Dimension(this.width, this.height));
+
+        setPreferredSize(new Dimension(this.width, this.height));
         this.cellWidth = this.width / totalCol;
         this.cellHeight = this.height / totalRow;
+
+        // ── 加载棋子图片资源 ──
         File dir = new File("resource");
         if (!dir.exists()) {
             dir = new File("D:" + File.separator + "game-lianliankan" + File.separator + "resource");
@@ -94,31 +93,123 @@ public class BoardPanel extends JPanel {
                 }
             }
         }
-        this.addMouseListener(new MouseAdapter() {
+
+        // ── 鼠标点击监听 ──
+        addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleClick(e.getX() , e.getY());
+                handleClick(e.getX(), e.getY());
             }
         });
     }
+
+    // ════════════════════════════════════════════════════
+    // 回调注册
+    // ════════════════════════════════════════════════════
+
+    public void setOnWinCallback(Runnable callback) {
+        this.onWinCallback = callback;
+    }
+
+    public void setOnFishFeed(Runnable callback) {
+        this.onFishFeed = callback;
+    }
+
+    // ════════════════════════════════════════════════════
+    // 游戏控制
+    // ════════════════════════════════════════════════════
+
+    /** 激活棋盘交互（START 按钮调用） */
+    public void startGame() {
+        started = true;
+    }
+
+    /** 替换棋盘（RESTART / 设置变更时调用） */
+    public void setGameBoard(GameBoard newBoard) {
+        this.gameBoard = newBoard;
+        this.totalRow = newBoard.getRowCnt();
+        this.totalCol = newBoard.getColCnt();
+        this.started = false;
+        this.firstSelected = null;
+        this.secondSelected = null;
+        this.lineList.clear();
+        repaint();
+    }
+
+    /** 刷新 StatusPanel 上的配对进度信息 */
+    public void refreshPairInfo() {
+        int totalPairs = gameBoard.getTotalPairs();
+        int clearedPairs = gameBoard.getClearedPairs();
+        int remainingPairs = gameBoard.getRemainingPairs();
+        statusPanel.updatePairInfo(remainingPairs, clearedPairs, totalPairs);
+    }
+
+    // ════════════════════════════════════════════════════
+    // 坐标映射
+    // ════════════════════════════════════════════════════
+
+    /** 像素坐标 → 棋盘行列坐标（超出边界返回 null） */
+    public Position getPositionByPoint(int x, int y) {
+        int col = x / cellWidth;
+        int row = y / cellHeight;
+        if (row < 0 || row >= totalRow || col < 0 || col >= totalCol) {
+            return null;
+        }
+        return new Position(row, col);
+    }
+
+    /** 获取某个棋盘格子在屏幕上的像素矩形 */
+    public Rectangle getRectangle(Position position) {
+        int x = position.getCol() * cellWidth;
+        int y = position.getRow() * cellHeight;
+        return new Rectangle(x, y, cellWidth, cellHeight);
+    }
+
+    // ════════════════════════════════════════════════════
+    // 连接线绘制
+    // ════════════════════════════════════════════════════
+
+    /** 显示消除连接线 */
+    public void showLine(List<Position> path) {
+        lineList.clear();
+        lineList.add(new Line(path));
+        lineVisible = true;
+        repaint();
+    }
+
+    /** 清除连接线 */
+    public void clearLine() {
+        lineVisible = false;
+        lineList.clear();
+        repaint();
+    }
+
+    // ════════════════════════════════════════════════════
+    // 点击处理（核心交互逻辑）
+    // ════════════════════════════════════════════════════
+
+    /**
+     * 处理鼠标点击棋盘
+     *
+     * 流程：
+     *   1. 如果未开始或正在动画 → 忽略
+     *   2. 第一次选中 → 高亮该格子
+     *   3. 第二次选中不同格子 → 判断是否可以消除
+     *      - 图标不同 → 取消选中
+     *      - 图标相同且可连接 → 显示连线动画 → 200ms 后消除
+     *      - 图标相同但不可连接 → 取消选中
+     */
     public void handleClick(int x, int y) {
-        if (!started){
-            return;
-        }
-        if (animating) {
-            return;
-        }
+        if (!started) return;
+        if (animating) return;
 
         Position pos = getPositionByPoint(x, y);
-        if (pos == null) {
-            return;
-        }
+        if (pos == null) return;
 
         Cell clickedCell = gameBoard.getCell(pos.getRow(), pos.getCol());
-        if (clickedCell == null || clickedCell.isEmpty()) {
-            return;
-        }
+        if (clickedCell == null || clickedCell.isEmpty()) return;
 
+        // ── 第一次选中 ──
         if (firstSelected == null) {
             gameBoard.clearAllChosen();
             clickedCell.setChosen(true);
@@ -127,6 +218,7 @@ public class BoardPanel extends JPanel {
             return;
         }
 
+        // ── 点击同一位置 → 取消选中 ──
         if (firstSelected.equals(pos)) {
             clickedCell.setChosen(false);
             firstSelected = null;
@@ -135,10 +227,12 @@ public class BoardPanel extends JPanel {
             return;
         }
 
+        // ── 第二次选中 ──
         secondSelected = pos;
         Cell firstCell = gameBoard.getCell(firstSelected.getRow(), firstSelected.getCol());
         Cell secondCell = gameBoard.getCell(secondSelected.getRow(), secondSelected.getCol());
 
+        // 图标不同 → 取消选中
         if (firstCell.getIconIndex() != secondCell.getIconIndex()) {
             gameBoard.clearAllChosen();
             firstCell.setChosen(false);
@@ -149,25 +243,34 @@ public class BoardPanel extends JPanel {
             return;
         }
 
-        if (utils.Utils.canLinkAB(gameBoard, firstSelected, secondSelected)) {
+        // 图标相同且可连接 → 消除动画
+        if (Utils.canLinkAB(gameBoard, firstSelected, secondSelected)) {
             secondCell.setChosen(true);
             repaint();
             animating = true;
-            List<Position> path = utils.Utils.findPath(gameBoard, firstSelected, secondSelected);
+
+            List<Position> path = Utils.findPath(gameBoard, firstSelected, secondSelected);
             showLine(path);
+
+            // 200ms 后消除
             Timer timer = new Timer(200, e -> {
                 firstCell.setEmpty(true);
                 secondCell.setEmpty(true);
                 statusPanel.addScore(10);
+
                 if (onFishFeed != null) onFishFeed.run();
                 refreshPairInfo();
-                if(gameBoard.isAllCleared()){
+
+                // 胜利检测
+                if (gameBoard.isAllCleared()) {
                     statusPanel.winGame();
                     if (onWinCallback != null) {
                         onWinCallback.run();
                     }
                     JOptionPane.showMessageDialog(BoardPanel.this, "你赢了！");
                 }
+
+                // 恢复状态
                 firstCell.setChosen(false);
                 secondCell.setChosen(false);
                 lineVisible = false;
@@ -180,6 +283,7 @@ public class BoardPanel extends JPanel {
             timer.setRepeats(false);
             timer.start();
         } else {
+            // 不可连接 → 取消选中
             gameBoard.clearAllChosen();
             firstCell.setChosen(false);
             secondCell.setChosen(false);
@@ -188,25 +292,17 @@ public class BoardPanel extends JPanel {
             repaint();
         }
     }
-    public void setGameBoard(GameBoard newBoard) {
-        this.gameBoard = newBoard;
-        this.totalRow = newBoard.getRowCnt();
-        this.totalCol = newBoard.getColCnt();
-        this.started = false;
-        this.firstSelected = null;
-        this.secondSelected = null;
-        this.lineList.clear();
-        repaint();
-    }
-    public Rectangle getRectangle(Position position) {
-        int x = position.getCol() * cellWidth;
-        int y = position.getRow() * cellHeight;
-        return new Rectangle(x, y, cellWidth, cellHeight);
-    }
+
+    // ════════════════════════════════════════════════════
+    // 自定义绘制
+    // ════════════════════════════════════════════════════
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
+        // ── 绘制棋盘格子 ──
         for (int i = 0; i < gameBoard.getRowCnt(); i++) {
             for (int j = 0; j < gameBoard.getColCnt(); j++) {
                 Rectangle rec = getRectangle(new Position(i, j));
@@ -215,35 +311,31 @@ public class BoardPanel extends JPanel {
                         rec.getX(), rec.getY(), rec.getWidth(), rec.getHeight(),
                         this
                 );
+
+                // 选中高亮框
                 if (gameBoard.getCell(i, j).getIsChosen()) {
                     g2.setColor(new Color(0xe8c87a));
                     g2.setStroke(new BasicStroke(3));
-                    g2.drawRect(
-                            rec.getX() + 1,
-                            rec.getY() + 1,
-                            rec.getWidth() - 3,
-                            rec.getHeight() - 3
-                    );
+                    g2.drawRect(rec.getX() + 1, rec.getY() + 1,
+                            rec.getWidth() - 3, rec.getHeight() - 3);
                 } else {
                     g2.setColor(new Color(122, 106, 85));
                     g2.setStroke(new BasicStroke(1));
-                    g2.drawRect(
-                            rec.getX(),
-                            rec.getY(),
-                            rec.getWidth() - 1,
-                            rec.getHeight() - 1
-                    );
+                    g2.drawRect(rec.getX(), rec.getY(),
+                            rec.getWidth() - 1, rec.getHeight() - 1);
                 }
             }
         }
+
+        // ── 绘制连接线 ──
         g2.setColor(new Color(0xe8c87a));
         g2.setStroke(new BasicStroke(3));
         if (lineVisible) {
-            for (Line line: lineList) {
+            for (Line line : lineList) {
                 List<Position> path = line.getPath();
-                for (int i = 0; i < path.size()-1; i++) {
-                   Rectangle rec1 = getRectangle(path.get(i));
-                   Rectangle rec2 = getRectangle(path.get(i+1));
+                for (int i = 0; i < path.size() - 1; i++) {
+                    Rectangle rec1 = getRectangle(path.get(i));
+                    Rectangle rec2 = getRectangle(path.get(i + 1));
                     g.drawLine(
                             (int) rec1.getCenterPosition().getX(),
                             (int) rec1.getCenterPosition().getY(),
@@ -251,14 +343,7 @@ public class BoardPanel extends JPanel {
                             (int) rec2.getCenterPosition().getY()
                     );
                 }
-
             }
         }
-    }
-    public void refreshPairInfo(){
-        int totalPairs = gameBoard.getTotalPairs();
-        int clearedPairs = gameBoard.getClearedPairs();
-        int remainingPairs = gameBoard.getRemainingPairs();
-        statusPanel.updatePairInfo(remainingPairs, clearedPairs, totalPairs);
     }
 }

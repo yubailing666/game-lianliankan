@@ -4,10 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * 游戏设置对话框 — 按钮、参数、版本信息一应俱全。
+ * 游戏设置对话框 — 模态窗口，包含时间/难度/音效选项
+ *
+ * 选项：
+ *   - 时间限制：60s / 90s / 120s / 180s / 无限制（JComboBox）
+ *   - 难度：3~6 的核心大小（JSlider）
+ *   - 音效开关：占位（待实现）
  *
  * 用法：
- * <pre>
  *   SettingsDialog dlg = new SettingsDialog(parent, currentTime, currentCoreSize);
  *   dlg.setVisible(true);                         // 阻塞直到关闭
  *   if (dlg.isRestartRequested()) {
@@ -15,17 +19,19 @@ import java.awt.*;
  *       int core = dlg.getSelectedCoreSize();
  *       // 应用…
  *   }
- * </pre>
  */
 public class SettingsDialog extends JDialog {
 
+    /** 时间选项与 ComboBox 索引的映射 */
+    private static final int[] TIME_OPTIONS = {60, 90, 120, 180, -1};
+
+    // ── UI 组件 ──
     private final JComboBox<String> timeLimitCombo;
     private final JSlider difficultySlider;
     private final JCheckBox soundCheckbox;
-    private boolean restartRequested = false;
 
-    // 时间选项与 ComboBox 索引对齐
-    private static final int[] TIME_OPTIONS = {60, 90, 120, 180, -1};
+    /** 用户是否点击了「重新开始」按钮 */
+    private boolean restartRequested = false;
 
     public SettingsDialog(JFrame parent, int currentTime, int currentCoreSize) {
         super(parent, "设置", true);
@@ -45,7 +51,9 @@ public class SettingsDialog extends JDialog {
         Font valueFont = new Font("Microsoft YaHei", Font.PLAIN, 14);
 
         // ── 1. 时间限制 ──
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
         JLabel timeLabel = new JLabel("⏱ 时间限制");
         timeLabel.setFont(labelFont);
         mainPanel.add(timeLabel, gbc);
@@ -54,17 +62,22 @@ public class SettingsDialog extends JDialog {
                 "60 秒", "90 秒", "120 秒", "180 秒", "无限制"
         });
         timeLimitCombo.setFont(valueFont);
-        // 匹配当前值
-        int idx = 2; // default 120
+
+        // 匹配当前时间设置到下拉框索引
+        int idx = 2; // 默认 120 秒
         for (int i = 0; i < TIME_OPTIONS.length; i++) {
-            if (TIME_OPTIONS[i] == currentTime) { idx = i; break; }
+            if (TIME_OPTIONS[i] == currentTime) {
+                idx = i;
+                break;
+            }
         }
         timeLimitCombo.setSelectedIndex(idx);
         gbc.gridx = 1;
         mainPanel.add(timeLimitCombo, gbc);
 
-        // ── 2. 难度（棋盘核心大小） ──
-        gbc.gridx = 0; gbc.gridy = 1;
+        // ── 2. 难度（棋盘核心大小 3~6） ──
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         JLabel diffLabel = new JLabel("🎯 难度");
         diffLabel.setFont(labelFont);
         mainPanel.add(diffLabel, gbc);
@@ -87,7 +100,8 @@ public class SettingsDialog extends JDialog {
         mainPanel.add(diffPanel, gbc);
 
         // ── 3. 音效开关（占位） ──
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         JLabel soundLabel = new JLabel("🔊 音效");
         soundLabel.setFont(labelFont);
         mainPanel.add(soundLabel, gbc);
@@ -99,8 +113,10 @@ public class SettingsDialog extends JDialog {
         gbc.gridx = 1;
         mainPanel.add(soundCheckbox, gbc);
 
-        // ── 4. 重新开始 ──
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        // ── 4. 重新开始按钮 ──
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
         gbc.insets = new Insets(14, 8, 4, 8);
         JButton restartBtn = new JButton("🔄 重新开始");
         restartBtn.setFont(new Font("Microsoft YaHei", Font.BOLD, 16));
@@ -114,7 +130,9 @@ public class SettingsDialog extends JDialog {
         mainPanel.add(restartBtn, gbc);
 
         // ── 5. 版本信息 ──
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
         gbc.insets = new Insets(8, 8, 4, 8);
         JLabel versionLabel = new JLabel(
                 "<html><center>🀄 连连看 v1.0<br>"
@@ -125,8 +143,10 @@ public class SettingsDialog extends JDialog {
         versionLabel.setForeground(Color.DARK_GRAY);
         mainPanel.add(versionLabel, gbc);
 
-        // ── 6. 关闭 ──
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
+        // ── 6. 关闭按钮 ──
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
         gbc.insets = new Insets(4, 8, 0, 8);
         JButton closeBtn = new JButton("关闭");
         closeBtn.setFont(new Font("Microsoft YaHei", Font.PLAIN, 14));
@@ -136,19 +156,21 @@ public class SettingsDialog extends JDialog {
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    /** 用户是否点了「重新开始」按钮 */
+    // ── 查询接口 ──
+
+    /** 用户是否点击了「重新开始」按钮 */
     public boolean isRestartRequested() {
         return restartRequested;
     }
 
-    /** 从 UI 读取时间限制（-1 = 无限制） */
+    /** 从下拉框读取当前选择的时间限制秒数（-1 = 无限制） */
     public int getSelectedTimeSeconds() {
         int idx = timeLimitCombo.getSelectedIndex();
         if (idx < 0 || idx >= TIME_OPTIONS.length) idx = 2;
         return TIME_OPTIONS[idx];
     }
 
-    /** 从 UI 读取核心难度（3~6） */
+    /** 从滑块读取当前选择的难度（3~6） */
     public int getSelectedCoreSize() {
         return difficultySlider.getValue();
     }

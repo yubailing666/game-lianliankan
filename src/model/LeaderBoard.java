@@ -3,36 +3,56 @@ package model;
 import java.io.*;
 import java.util.*;
 
+/**
+ * 排行榜数据层 — 管理所有游戏记录，持久化到 leaderboard.dat
+ *
+ * 每个模式取 TOP 5：按分数降序排列，分数相同时按用时升序（更快者优先）
+ */
 public class LeaderBoard {
+
+    /** 排行榜文件路径（项目根目录下的 leaderboard.dat） */
     public static final String FILE_NAME = System.getProperty("user.dir") + File.separator + "leaderboard.dat";
+    /** 每模式取前几名 */
     public static final int TOP_N = 5;
 
+    // ── 数据 ──
+
     public List<LeaderRecord> records;
-    public LeaderBoard(){
+
+    public LeaderBoard() {
         records = new ArrayList<>();
         loadFromFile();
     }
 
-    public void addRecord(LeaderRecord record){
+    // ── 写入 ──
+
+    /** 添加一条记录并立即持久化 */
+    public void addRecord(LeaderRecord record) {
         records.add(record);
         saveToFile();
     }
-    public List<LeaderRecord> getTopRecords(String mode){
-        // 1. 筛选出指定模式的记录
+
+    // ── 查询 ──
+
+    /**
+     * 获取指定模式的前 TOP_N 名
+     * 排序规则：分数降序 → 用时升序
+     */
+    public List<LeaderRecord> getTopRecords(String mode) {
         List<LeaderRecord> modeRecords = new ArrayList<>();
         for (LeaderRecord r : records) {
             if (r.mode.equals(mode)) {
                 modeRecords.add(r);
             }
         }
-        // 2. 排序：分数降序，分数相同用时升序
+
         Collections.sort(modeRecords, (a, b) -> {
             if (b.score != a.score) {
-                return b.score - a.score;
+                return b.score - a.score;       // 分数降序
             }
-            return a.timeUsed - b.timeUsed;
+            return a.timeUsed - b.timeUsed;     // 用时短的排前面
         });
-        // 3. 取前 TOP_N 条
+
         List<LeaderRecord> topRecords = new ArrayList<>();
         int count = Math.min(TOP_N, modeRecords.size());
         for (int i = 0; i < count; i++) {
@@ -40,21 +60,29 @@ public class LeaderBoard {
         }
         return topRecords;
     }
-    public void loadFromFile(){
+
+    // ── 持久化 ──
+
+    /** 从 leaderboard.dat 加载所有记录 */
+    public void loadFromFile() {
         File file = new File(FILE_NAME);
-        if(!file.exists()) return;
-        try(BufferedReader reader = new BufferedReader(new FileReader(file))){
+        if (!file.exists()) return;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            while((line = reader.readLine())!=null){
+            while ((line = reader.readLine()) != null) {
                 LeaderRecord record = LeaderRecord.fromLine(line.trim());
-                if(record != null){
+                if (record != null) {
                     records.add(record);
                 }
             }
-        } catch (IOException e) {}
+        } catch (IOException e) {
+            // 文件读取失败则保持空列表
+        }
     }
-    public void saveToFile(){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))){
+
+    /** 将所有记录写回 leaderboard.dat（全量覆盖） */
+    public void saveToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (LeaderRecord r : records) {
                 writer.write(r.toLine());
                 writer.newLine();
