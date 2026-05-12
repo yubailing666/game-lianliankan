@@ -216,7 +216,7 @@ public class BoardPanel extends JPanel {
                         this
                 );
                 if (gameBoard.getCell(i, j).getIsChosen()) {
-                    g2.setColor(Color.RED);
+                    g2.setColor(new Color(0xe8c87a));
                     g2.setStroke(new BasicStroke(3));
                     g2.drawRect(
                             rec.getX() + 1,
@@ -225,7 +225,7 @@ public class BoardPanel extends JPanel {
                             rec.getHeight() - 3
                     );
                 } else {
-                    g2.setColor(Color.GRAY);
+                    g2.setColor(new Color(122, 106, 85));
                     g2.setStroke(new BasicStroke(1));
                     g2.drawRect(
                             rec.getX(),
@@ -236,7 +236,7 @@ public class BoardPanel extends JPanel {
                 }
             }
         }
-        g2.setColor(Color.RED);
+        g2.setColor(new Color(0xe8c87a));
         g2.setStroke(new BasicStroke(3));
         if (lineVisible) {
             for (Line line: lineList) {

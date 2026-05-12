@@ -13,7 +13,8 @@ import java.io.IOException;
  */
 public class MusicManager {
 
-    public static final String DIR = "D:" + File.separator + "Project_6" + File.separator;
+    public static final String DIR = "resource" + File.separator + "music" + File.separator;
+    public static final String FALLBACK_DIR = "D:" + File.separator + "game-lianliankan" + File.separator + "resource" + File.separator + "music" + File.separator;
 
     private static Clip currentClip;
     private static String pendingTrack;
@@ -53,6 +54,9 @@ public class MusicManager {
             }
 
             File file = new File(DIR + name + ".wav");
+            if (!file.exists()) {
+                file = new File(FALLBACK_DIR + name + ".wav");
+            }
             if (!file.exists()) {
                 System.err.println("音乐文件不存在: " + file.getAbsolutePath());
                 return;
