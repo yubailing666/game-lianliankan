@@ -34,7 +34,7 @@ public class SettingsDialog extends JDialog {
     private boolean restartRequested = false;
 
     public SettingsDialog(JFrame parent, int currentTime, int currentCoreSize) {
-        super(parent, "设置", true);
+        super(parent, "Settings", true);
         setSize(420, 420);
         setLocationRelativeTo(parent);
         setResizable(false);

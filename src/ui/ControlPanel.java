@@ -4,10 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * 底部控制栏 — 四个操作按钮
+ * 底部控制栏 — 六个操作按钮
  *
  *   "> START"  — 启动游戏（开启计时器 + 激活棋盘交互）
  *   "RESTART"  — 重新生成棋盘并重置状态
+ *   "SAVE"     — 保存当前游戏
+ *   "LOAD"     — 加载存档
  *   "SETTINGS" — 打开设置对话框（可改时间和难度后重启）
  *   "RANK"     — 打开排行榜弹窗
  */
@@ -21,14 +23,19 @@ public class ControlPanel extends JPanel {
 
     // ── UI 组件 ──
     StatusPanel statusPanel;
+    BoardPanel boardPanel;
     JButton startButton;
     JButton restartButton;
+    JButton saveButton;
+    JButton loadButton;
     JButton settingsButton;
     JButton leaderBoardBtn;
 
     // ── 回调 ──
     Runnable onRestart;
     Runnable onLeaderBoard;
+    Runnable onSave;
+    Runnable onLoad;
 
     // ── 设置参数（从 SettingsDialog 读回） ──
     int currentTimeLimit = 120;
@@ -44,6 +51,14 @@ public class ControlPanel extends JPanel {
 
     public void setOnLeaderBoard(Runnable callback) {
         this.onLeaderBoard = callback;
+    }
+
+    public void setOnSave(Runnable callback) {
+        this.onSave = callback;
+    }
+
+    public void setOnLoad(Runnable callback) {
+        this.onLoad = callback;
     }
 
     // ════════════════════════════════════════════════════
@@ -62,12 +77,13 @@ public class ControlPanel extends JPanel {
         this.width = width;
         this.height = height;
         this.statusPanel = statusPanel;
+        this.boardPanel = boardPanel;
 
-        // ── 计算四个按钮的居中位置 ──
-        int btnWidth = 130;
+        // ── 计算六个按钮的居中位置 ──
+        int btnWidth = 110;
         int btnHeight = 40;
-        int gap = 12;
-        int totalW = btnWidth * 4 + gap * 3;
+        int gap = 10;
+        int totalW = btnWidth * 6 + gap * 5;
         int x = (width - totalW) / 2;
         int y = (height - btnHeight) / 2;
 
@@ -89,9 +105,29 @@ public class ControlPanel extends JPanel {
             if (onRestart != null) onRestart.run();
         });
 
+        // ── SAVE 按钮 ──
+        saveButton = createStyledButton("SAVE", new Color(0x4CAF50), new Color(0xffffff));
+        saveButton.setBounds(x + 2 * (btnWidth + gap), y, btnWidth, btnHeight);
+        add(saveButton);
+        saveButton.addActionListener(e -> {
+            if (onSave != null) {
+                onSave.run();
+            }
+        });
+
+        // ── LOAD 按钮 ──
+        loadButton = createStyledButton("LOAD", new Color(0x2196F3), new Color(0xffffff));
+        loadButton.setBounds(x + 3 * (btnWidth + gap), y, btnWidth, btnHeight);
+        add(loadButton);
+        loadButton.addActionListener(e -> {
+            if (onLoad != null) {
+                onLoad.run();
+            }
+        });
+
         // ── SETTINGS 按钮 ──
         settingsButton = createStyledButton("SETTINGS", new Color(0x5c4a3a), new Color(0xa09070));
-        settingsButton.setBounds(x + 2 * (btnWidth + gap), y, btnWidth, btnHeight);
+        settingsButton.setBounds(x + 4 * (btnWidth + gap), y, btnWidth, btnHeight);
         add(settingsButton);
         settingsButton.addActionListener(e -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -106,7 +142,7 @@ public class ControlPanel extends JPanel {
 
         // ── RANK 按钮 ──
         leaderBoardBtn = createStyledButton("RANK", new Color(0x4a3d2e), new Color(0xe8c87a));
-        leaderBoardBtn.setBounds(x + 3 * (btnWidth + gap), y, btnWidth, btnHeight);
+        leaderBoardBtn.setBounds(x + 5 * (btnWidth + gap), y, btnWidth, btnHeight);
         add(leaderBoardBtn);
         leaderBoardBtn.addActionListener(e -> {
             if (onLeaderBoard != null) onLeaderBoard.run();

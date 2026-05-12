@@ -1,5 +1,6 @@
 package ui;
 
+import effects.EffectManager;
 import model.*;
 import model.Rectangle;
 import utils.Utils;
@@ -55,6 +56,9 @@ public class BoardPanel extends JPanel {
     Runnable onWinCallback;
     Runnable onFishFeed;
 
+    // ── 特效系统 ──
+    private EffectManager effectManager;
+
     // ════════════════════════════════════════════════════
     // 构造与初始化
     // ════════════════════════════════════════════════════
@@ -101,6 +105,16 @@ public class BoardPanel extends JPanel {
                 handleClick(e.getX(), e.getY());
             }
         });
+
+        // ── 初始化特效管理器并启动动画定时器 ──
+        effectManager = new EffectManager();
+        Timer effectTimer = new Timer(16, e -> {
+            effectManager.update();
+            if (effectManager.hasActiveEffects()) {
+                repaint();
+            }
+        });
+        effectTimer.start();
     }
 
     // ════════════════════════════════════════════════════
@@ -133,6 +147,7 @@ public class BoardPanel extends JPanel {
         this.firstSelected = null;
         this.secondSelected = null;
         this.lineList.clear();
+        effectManager.clearAll();
         repaint();
     }
 
@@ -254,6 +269,9 @@ public class BoardPanel extends JPanel {
 
             // 200ms 后消除
             Timer timer = new Timer(200, e -> {
+                // 触发破碎特效（从两个棋子中点爆发）
+                effectManager.createShatterEffect(firstSelected, secondSelected, cellWidth, cellHeight, firstCell.getIconIndex());
+
                 firstCell.setEmpty(true);
                 secondCell.setEmpty(true);
                 statusPanel.addScore(10);
@@ -296,6 +314,7 @@ public class BoardPanel extends JPanel {
     // ════════════════════════════════════════════════════
     // 自定义绘制
     // ════════════════════════════════════════════════════
+    
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -345,5 +364,26 @@ public class BoardPanel extends JPanel {
                 }
             }
         }
+
+        // ── 绘制破碎特效（在最上层） ──
+        effectManager.draw(g2);
+    }
+    public GameBoard getGameBoard() {
+        return gameBoard;
+    }
+    public boolean isStarted() {
+        return started;
+    }
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+    public void restoreFromSave(GameBoard saveboard){
+        this.gameBoard = saveboard;
+        this.totalRow = saveboard.getRowCnt();
+        this.totalCol = saveboard.getColCnt();
+        this.firstSelected = null;
+        this.secondSelected = null;
+        this.lineList.clear();
+        repaint();
     }
 }

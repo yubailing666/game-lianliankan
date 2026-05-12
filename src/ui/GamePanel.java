@@ -1,9 +1,11 @@
 package ui;
 
 import model.*;
+import utils.SaveManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 /**
  * 游戏主面板 — 组合所有游戏子面板并连接回调
@@ -28,10 +30,12 @@ public class GamePanel extends JPanel {
     private CatPanel catPanel;
     private boolean isHardMode;
     private String username;
+    private String currentMode;
 
     public GamePanel(boolean isHardMode, LeaderBoard leaderBoard, String username) {
         this.isHardMode = isHardMode;
         this.username = username;
+        this.currentMode = isHardMode ? "困难模式" : "简单模式";
 
         setLayout(null);
         setBackground(new Color(0x6b5b45));
@@ -86,5 +90,100 @@ public class GamePanel extends JPanel {
                     statusPanel.getScore(), statusPanel.getTimeUsed());
             leaderBoard.addRecord(record);
         });
+
+        // 保存按钮回调
+        controlPanel.setOnSave(() -> {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(controlPanel);
+            SaveLoadDialog dialog = new SaveLoadDialog(frame, GamePanel.this, username, currentMode);
+            dialog.setVisible(true);
+        });
+
+        // 加载按钮回调
+        controlPanel.setOnLoad(() -> {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(controlPanel);
+            SaveLoadDialog dialog = new SaveLoadDialog(frame, GamePanel.this, username, currentMode);
+            dialog.setVisible(true);
+        });
+    }
+
+    /**
+     * 保存当前游戏状态到指定槽位
+     */
+    public boolean saveGame(int slot) {
+        String filePath = SaveManager.getSaveFilePath(username, currentMode, slot);
+        
+        return SaveManager.saveGame(
+            filePath,
+            username,
+            currentMode,
+            slot,
+            statusPanel.getScore(),
+            statusPanel.getRemainingSeconds(),
+            statusPanel.getElapsedSeconds(),
+            statusPanel.getComboCount(),
+            statusPanel.getLastEliminationTime(),
+            boardPanel.getGameBoard()
+        );
+    }
+
+    /**
+     * 检查指定槽位是否有存档
+     */
+    public boolean hasSave(int slot) {
+        return SaveManager.hasSave(username, currentMode, slot);
+    }
+
+    /**
+     * 加载指定槽位的存档并恢复游戏状态
+     */
+    public boolean loadGame(int slot) {
+        String filePath = SaveManager.getSaveFilePath(username, currentMode, slot);
+        SaveManager.SaveData data = SaveManager.loadGame(filePath);
+        
+        if (data == null) {
+            return false;
+        }
+        
+        boardPanel.restoreFromSave(data.gameBoard);
+        
+        statusPanel.setScore(data.score);
+        statusPanel.setRemainingSeconds(data.remainingSeconds);
+        statusPanel.setElapsedSeconds(data.elapsedSeconds);
+        statusPanel.setComboState(data.comboCount, data.lastEliminationTime);
+        
+        boardPanel.refreshPairInfo();
+        
+        boardPanel.setStarted(true);
+        statusPanel.startTimer();
+        
+        return true;
+    }
+
+    /**
+     * 获取所有可用的存档槽位列表
+     */
+    public List<Integer> getAvailableSaves() {
+        return SaveManager.getAvailableSlots(username, currentMode);
+    }
+
+    /**
+     * 检查棋盘是否已开始（供对话框调用）
+     */
+    public boolean boardPanelIsStarted() {
+        return boardPanel.isStarted();
+    }
+
+    /**
+     * 获取用户名
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * 获取当前模式
+     */
+    public String getCurrentMode() {
+        return currentMode;
     }
 }

@@ -12,7 +12,7 @@ public class GameBoard {
     int rowCnt;                // 总行数（含边框）
     int colCnt;                // 总列数（含边框）
     Cell[][] board;            // 二维格子数组
-    int totalPairs;            // 初始总配对数量
+    public int totalPairs;            // 初始总配对数量
 
     public GameBoard(int rowCnt, int colCnt, Cell[][] board) {
         this.rowCnt = rowCnt;

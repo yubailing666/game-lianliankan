@@ -286,6 +286,70 @@ public class StatusPanel extends JPanel {
         remainingPairLabel.setText("剩余可消除: 0对");
         progressLabel.setText("关卡进度: 0%");
     }
+    // ════════════════════════════════════════════════════
+    // 存档相关方法
+    // ════════════════════════════════════════════════════
+
+    public int getRemainingSeconds() {
+        return totalSeconds;
+    }
+    public int getElapsedSeconds() {
+        return countSeconds;
+    }
+    public int getComboCount(){
+        return comboCount;
+    }
+    public long getLastEliminationTime() {
+        return lastEliminationTime;
+    }
+    public void setRemainingSeconds(int seconds) {
+        this.totalSeconds = seconds;
+        this.seconds = seconds % 60;
+        this.minutes = seconds / 60;
+        timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
+    }
+
+    /**
+     * 设置已用秒数（加载存档时调用）
+     */
+    public void setElapsedSeconds(int seconds) {
+        this.countSeconds = seconds;
+        this.secondsUsed = seconds % 60;
+        this.minutesUsed = seconds / 60;
+        timecountLabel.setText(String.format("%02d:%02d", minutesUsed, secondsUsed));
+    }
+
+    /**
+     * 设置分数（加载存档时调用）
+     */
+    public void setScore(int score) {
+        this.score = score;
+        scoreValue.setText(String.valueOf(score));
+    }
+
+    /**
+     * 设置连击状态（加载存档时调用）
+     */
+    public void setComboState(int comboCount, long lastTime) {
+        this.comboCount = comboCount;
+        this.lastEliminationTime = lastTime;
+        if (comboCount >= 3) {
+            String message = String.format(">>>COMBO x%d! <<<", comboCount);
+            comboLabel.setText(message);
+            comboLabel.setVisible(true);
+            comboTimer.restart();
+        }
+    }
+
+    /**
+     * 启动计时器（加载存档后调用）
+     */
+    public void startTimer() {
+        statusLabel.setText("进行中");
+        timer.start();
+    }
+
+
 
     // ════════════════════════════════════════════════════
     // 内部类：COMBO 彩虹闪烁动画
