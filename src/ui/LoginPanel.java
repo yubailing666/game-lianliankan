@@ -31,7 +31,7 @@ public class LoginPanel extends JPanel {
     public LoginPanel(GameFrame parent) {
         this.parent = parent;
         setLayout(null);
-        setBackground(new Color(0x5c4a3a));
+        setBackground(new Color(0xf4f0e8));
         setSize(parent.getWidth(), parent.getHeight());
 
         // ── 账号输入框 ──
@@ -41,17 +41,25 @@ public class LoginPanel extends JPanel {
             public void focusGained(java.awt.event.FocusEvent e) {
                 if (accountField.getText().equals("请输入账号")) {
                     accountField.setText("");
+                    accountField.setForeground(new Color(0x3a3530));
                 }
             }
             public void focusLost(java.awt.event.FocusEvent e) {
                 if (accountField.getText().isEmpty()) {
                     accountField.setText("请输入账号");
+                    accountField.setForeground(new Color(0x9a9080));
                 }
             }
         });
-        accountField.setSize(170, 35);
+        accountField.setSize(170, 32);
         accountField.setLocation(110, 100);
-        accountField.setOpaque(false);
+        accountField.setForeground(new Color(0x9a9080));
+        accountField.setOpaque(true);
+        accountField.setBackground(new Color(0xfcf9f2));
+        accountField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(0xe8ddd0)),
+            BorderFactory.createEmptyBorder(0, 8, 0, 8)
+        ));
         add(accountField);
 
         // ── 密码输入框 ──
@@ -61,32 +69,42 @@ public class LoginPanel extends JPanel {
             public void focusGained(java.awt.event.FocusEvent e) {
                 if (passwordField.getText().equals("请输入密码")) {
                     passwordField.setText("");
+                    passwordField.setForeground(new Color(0x3a3530));
                 }
             }
             public void focusLost(java.awt.event.FocusEvent e) {
                 if (passwordField.getText().isEmpty()) {
                     passwordField.setText("请输入密码");
+                    passwordField.setForeground(new Color(0x9a9080));
                 }
             }
         });
-        passwordField.setSize(170, 35);
+        passwordField.setSize(170, 32);
         passwordField.setLocation(110, 140);
-        passwordField.setOpaque(false);
+        passwordField.setForeground(new Color(0x9a9080));
+        passwordField.setOpaque(true);
+        passwordField.setBackground(new Color(0xfcf9f2));
+        passwordField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(0xe8ddd0)),
+            BorderFactory.createEmptyBorder(0, 8, 0, 8)
+        ));
         add(passwordField);
 
         // ── 小猫名字输入框 ──
         catNameField = new JTextField("Mimi");
-        catNameField.setSize(170, 35);
+        catNameField.setSize(170, 32);
         catNameField.setLocation(110, 180);
-        add(catNameField);
+        catNameField.setOpaque(true);
+        catNameField.setBackground(new Color(0xfcf9f2));
+        catNameField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(0xe8ddd0)),
+            BorderFactory.createEmptyBorder(0, 8, 0, 8)
+        ));
 
         // ── 登录按钮 ──
-        JButton loginBtn = new JButton("登录");
-        loginBtn.setLocation(90, 225);
-        loginBtn.setSize(80, 30);
-        loginBtn.setOpaque(false);
-        loginBtn.setContentAreaFilled(false);
-        loginBtn.setBorderPainted(true);
+        RoundedButton loginBtn = new RoundedButton("登录", 0xd4a04a);
+        loginBtn.setForeground(Color.WHITE);
+        loginBtn.setBounds(90, 225, 80, 32);
         add(loginBtn);
 
         loginBtn.addActionListener(e -> {
@@ -108,12 +126,9 @@ public class LoginPanel extends JPanel {
         });
 
         // ── 注册按钮 ──
-        JButton registerBtn = new JButton("注册");
-        registerBtn.setLocation(180, 225);
-        registerBtn.setSize(80, 30);
-        registerBtn.setOpaque(false);
-        registerBtn.setContentAreaFilled(false);
-        registerBtn.setBorderPainted(true);
+        RoundedButton registerBtn = new RoundedButton("注册", 0x8a7a65);
+        registerBtn.setForeground(Color.WHITE);
+        registerBtn.setBounds(180, 225, 80, 32);
         add(registerBtn);
 
         registerBtn.addActionListener(e -> {

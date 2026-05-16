@@ -4,6 +4,7 @@ import model.LeaderBoard;
 import model.LeaderRecord;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
@@ -26,10 +27,12 @@ public class LeaderBoardPanel extends JDialog {
         setSize(600, 500);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(new Color(0xf4f0e8));
 
         // ── 标题 ──
         JLabel titleLabel = new JLabel("排行榜 TOP 5", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Microsoft YaHei", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(0x3a3530));
         add(titleLabel, BorderLayout.NORTH);
 
         // ── 双表并排 ──
@@ -41,6 +44,9 @@ public class LeaderBoardPanel extends JDialog {
         // ── 关闭按钮 ──
         JButton closeBtn = new JButton("关闭");
         closeBtn.setFont(new Font("Microsoft YaHei", Font.PLAIN, 16));
+        closeBtn.setBackground(new Color(0xd4a04a));
+        closeBtn.setForeground(Color.WHITE);
+        closeBtn.setFocusPainted(false);
         closeBtn.addActionListener(e -> dispose());
         JPanel btnPanel = new JPanel();
         btnPanel.add(closeBtn);
@@ -54,7 +60,10 @@ public class LeaderBoardPanel extends JDialog {
      */
     private JPanel createTablePanel(String title, List<LeaderRecord> records) {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(title));
+        panel.setBackground(new Color(0xf4f0e8));
+        panel.setBorder(BorderFactory.createTitledBorder(
+            null, title, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
+            new Font("Microsoft YaHei", Font.BOLD, 14), new Color(0x3a3530)));
 
         String[] columns = {"#", "玩家", "分数", "用时"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -75,7 +84,11 @@ public class LeaderBoardPanel extends JDialog {
         JTable table = new JTable(model);
         table.setFont(new Font("Microsoft YaHei", Font.PLAIN, 14));
         table.setRowHeight(28);
+        table.setForeground(new Color(0x3a3530));
+        table.setBackground(new Color(0xf4f0e8));
         table.getTableHeader().setFont(new Font("Microsoft YaHei", Font.BOLD, 14));
+        table.getTableHeader().setForeground(new Color(0x3a3530));
+        table.getTableHeader().setBackground(new Color(0xece6dc));
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);

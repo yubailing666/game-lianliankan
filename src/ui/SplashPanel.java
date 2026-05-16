@@ -40,6 +40,8 @@ public class SplashPanel extends JPanel implements ActionListener {
         setLayout(new BorderLayout());
         setBackground(new Color(0x5c4a3a));
 
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         // 播放启动页音乐
         MusicManager.play("splash");
 
@@ -50,8 +52,8 @@ public class SplashPanel extends JPanel implements ActionListener {
         // 点击跳转到登录页
         addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                MusicManager.play("login");
                 parent.showPage("login");
+                MusicManager.play("login");
             }
         });
     }

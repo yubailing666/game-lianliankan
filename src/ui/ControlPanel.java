@@ -153,16 +153,11 @@ public class ControlPanel extends JPanel {
     // 工具
     // ════════════════════════════════════════════════════
 
-    /** 创建统一样式的按钮（纯色背景、无边框、手型光标） */
+    /** 创建统一样式的按钮（圆角、手型光标） */
     private JButton createStyledButton(String text, Color bg, Color fg) {
-        JButton btn = new JButton(text);
+        RoundedButton btn = new RoundedButton(text, bg.getRGB() & 0xFFFFFF);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
-        btn.setBackground(bg);
         btn.setForeground(fg);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setOpaque(true);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return btn;
     }
 }

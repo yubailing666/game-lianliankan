@@ -7,6 +7,7 @@ import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -40,6 +41,7 @@ public class BoardPanel extends JPanel {
 
     // ── 图片资源 ──
     List<Image> imageList = new ArrayList<>();
+    Image[] scaledImages;
 
     // ── 游戏状态 ──
     StatusPanel statusPanel;
@@ -96,6 +98,17 @@ public class BoardPanel extends JPanel {
                     imageList.add(icon.getImage());
                 }
             }
+        }
+
+        // 预缩放到格子大小（同步缩放，消除每帧缩放开销 + 懒加载空白 bug）
+        scaledImages = new Image[imageList.size()];
+        for (int i = 0; i < imageList.size(); i++) {
+            BufferedImage bi = new BufferedImage(cellWidth, cellHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = bi.createGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            g2d.drawImage(imageList.get(i), 0, 0, cellWidth, cellHeight, null);
+            g2d.dispose();
+            scaledImages[i] = bi;
         }
 
         // ── 鼠标点击监听 ──
@@ -325,11 +338,13 @@ public class BoardPanel extends JPanel {
         for (int i = 0; i < gameBoard.getRowCnt(); i++) {
             for (int j = 0; j < gameBoard.getColCnt(); j++) {
                 Rectangle rec = getRectangle(new Position(i, j));
-                g2.drawImage(
-                        imageList.get(gameBoard.getCell(i, j).getIconIndex()),
+                int iconIdx = gameBoard.getCell(i, j).getIconIndex();
+                if (iconIdx >= 0 && iconIdx < scaledImages.length) {
+                    g2.drawImage(scaledImages[iconIdx],
                         rec.getX(), rec.getY(), rec.getWidth(), rec.getHeight(),
                         this
                 );
+                }  // end: if (iconIdx >= 0)
 
                 // 选中高亮框
                 if (gameBoard.getCell(i, j).getIsChosen()) {
@@ -352,10 +367,10 @@ public class BoardPanel extends JPanel {
         if (lineVisible) {
             for (Line line : lineList) {
                 List<Position> path = line.getPath();
-                for (int i = 0; i < path.size() - 1; i++) {
-                    Rectangle rec1 = getRectangle(path.get(i));
-                    Rectangle rec2 = getRectangle(path.get(i + 1));
-                    g.drawLine(
+                for (int pIdx = 0; pIdx < path.size() - 1; pIdx++) {
+                    Rectangle rec1 = getRectangle(path.get(pIdx));
+                    Rectangle rec2 = getRectangle(path.get(pIdx + 1));
+                    g2.drawLine(
                             (int) rec1.getCenterPosition().getX(),
                             (int) rec1.getCenterPosition().getY(),
                             (int) rec2.getCenterPosition().getX(),
