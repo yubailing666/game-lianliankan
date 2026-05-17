@@ -19,11 +19,11 @@ public class ShardParticle extends Particle{
 
     @Override
     public void draw(Graphics2D g){
-        if(life <=  0) return;
-        AffineTransform transform = new AffineTransform();
-        transform.translate(x + size / 2, y + size / 2);
-        transform.rotate(rotation);
-        transform.translate(-size / 2, -size / 2);
+        if(life <= 0) return;
+        AffineTransform old = g.getTransform();
+        AffineTransform transform = new AffineTransform(old);
+        transform.translate(x, y);
+        transform.rotate(rotation, size / 2, size / 2);
         g.setTransform(transform);
         g.setColor(new Color(
                 color.getRed(),
@@ -34,6 +34,7 @@ public class ShardParticle extends Particle{
         int[] xPoints = {0, (int) size, (int)(size / 2)};
         int[] yPoints = {0, 0, (int)size};
         g.fillPolygon(xPoints, yPoints, 3);
+        g.setTransform(old);
     }
 
 }
