@@ -77,6 +77,8 @@ public class ControlPanel extends JPanel {
         setBounds(offSetX, offSetY, width, height);
         setBackground(new Color(0x5c4a3a));
         setOpaque(true);
+        // 顶部 hairline border 与 BoardPanel 分隔
+        setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x7a6a52)));
 
         this.offSetX = offSetX;
         this.offSetY = offSetY;

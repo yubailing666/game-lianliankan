@@ -73,7 +73,7 @@ public class BoardPanel extends JPanel {
         this.offSetY = offSetY;
 
         setBounds(offSetX, offSetY, width, height);
-        setBackground(new Color(0x6b5b45));
+        setBackground(new Color(0x7a6a52));  // 比 canvas 稍亮，作为棋盘表面
         setOpaque(true);
 
         this.totalRow = gameBoard.getRowCnt();
@@ -344,6 +344,17 @@ public class BoardPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
+        // ── 棋盘内凹边框（inset bevel） ──
+        { // 作用域块，避免变量泄漏
+            int w = getWidth(), h = getHeight();
+            g2.setColor(new Color(0x8a7a62));  // 浅（上 + 左）
+            g2.drawLine(0, 0, w - 1, 0);         // 上——全宽
+            g2.drawLine(0, 1, 0, h - 1);         // 左——跳过(0,0)已被上画
+            g2.setColor(new Color(0x5a4a35));  // 深（下 + 右）
+            g2.drawLine(0, h - 1, w - 1, h - 1);  // 下——全宽
+            g2.drawLine(w - 1, 1, w - 1, h - 1);  // 右——跳过(w-1,0)已被上画
+        }
 
         // ── 绘制棋盘格子 ──
         for (int i = 0; i < gameBoard.getRowCnt(); i++) {
