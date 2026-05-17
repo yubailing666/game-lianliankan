@@ -309,7 +309,8 @@ public class BoardPanel extends JPanel {
                     if (onWinCallback != null) {
                         onWinCallback.run();
                     }
-                    JOptionPane.showMessageDialog(BoardPanel.this, "你赢了！");
+                    JFrame p = (JFrame) SwingUtilities.getWindowAncestor(BoardPanel.this);
+                    GameResultDialog.showWin(p, statusPanel.getScore());
                 }
 
                 // 恢复状态

@@ -3,6 +3,7 @@ package ui;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import utils.MusicManager;
 
 /**
  * 游戏状态面板 — HUD 显示得分、倒计时、连击、配对进度
@@ -129,7 +130,8 @@ public class StatusPanel extends JPanel {
 
             if (totalSeconds == 0) {
                 timer.stop();
-                JOptionPane.showMessageDialog(null, "你输了！");
+                JFrame p = (JFrame) SwingUtilities.getWindowAncestor(StatusPanel.this);
+                GameResultDialog.showLose(p);
             }
             timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
             timecountLabel.setText(String.format("%02d:%02d", minutesUsed, secondsUsed));
