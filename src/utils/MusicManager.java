@@ -29,6 +29,8 @@ public class MusicManager {
     private static String pendingTrack;
     /** 是否正在切换过程中 */
     private static boolean switching;
+    /** 音量 0.0 ~ 1.0（默认 0.5） */
+    private static float volume = 0.5f;
 
     // ── 公开接口 ──
 
@@ -100,12 +102,48 @@ public class MusicManager {
             });
 
             currentClip.open(stream);
+            applyVolume();
             currentClip.loop(Clip.LOOP_CONTINUOUSLY);
             switching = false;
 
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             System.err.println("播放音乐失败: " + name);
             e.printStackTrace();
+        }
+    }
+
+    /** 设置音量（0.0 ~ 1.0），立即生效 */
+    public static void setVolume(float vol) {
+        volume = Math.max(0f, Math.min(1f, vol));
+        applyVolume();
+    }
+
+    /** 获取当前音量 */
+    public static float getVolume() {
+        return volume;
+    }
+
+    /** 将当前音量应用到正在播放的剪辑 */
+    private static void applyVolume() {
+        if (currentClip == null || !currentClip.isOpen()) return;
+        try {
+            if (currentClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl gain = (FloatControl) currentClip.getControl(FloatControl.Type.MASTER_GAIN);
+                float min = gain.getMinimum();  // 通常是 -80 dB
+                float max = gain.getMaximum();  // 通常是 6 dB
+                // volume=0 → 静音; volume=1 → 最大音量
+                float dB;
+                if (volume <= 0f) {
+                    dB = min;
+                } else {
+                    // 对数映射: 0~1 → min~max
+                    dB = min + (max - min) * (float) Math.log10(1 + 9 * volume);
+                    // log10(1+9*0.5) ≈ 0.699, log10(10)=1
+                }
+                gain.setValue(Math.max(min, Math.min(max, dB)));
+            }
+        } catch (Exception e) {
+            System.err.println("设置音量失败: " + e.getMessage());
         }
     }
 }

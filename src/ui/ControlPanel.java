@@ -36,10 +36,12 @@ public class ControlPanel extends JPanel {
     Runnable onLeaderBoard;
     Runnable onSave;
     Runnable onLoad;
+    java.util.function.Consumer<Boolean> onModeChange;
 
     // ── 设置参数（从 SettingsDialog 读回） ──
     int currentTimeLimit = 120;
-    int currentCoreSize = 4;
+    boolean currentIsHardMode = false;
+    int currentMusicVolume = 50;
 
     // ════════════════════════════════════════════════════
     // 回调注册
@@ -59,6 +61,10 @@ public class ControlPanel extends JPanel {
 
     public void setOnLoad(Runnable callback) {
         this.onLoad = callback;
+    }
+
+    public void setOnModeChange(java.util.function.Consumer<Boolean> callback) {
+        this.onModeChange = callback;
     }
 
     // ════════════════════════════════════════════════════
@@ -131,11 +137,13 @@ public class ControlPanel extends JPanel {
         add(settingsButton);
         settingsButton.addActionListener(e -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            SettingsDialog dlg = new SettingsDialog(frame, currentTimeLimit, currentCoreSize);
+            SettingsDialog dlg = new SettingsDialog(frame, currentTimeLimit, currentIsHardMode, currentMusicVolume);
             dlg.setVisible(true);
             if (dlg.isRestartRequested()) {
                 currentTimeLimit = dlg.getSelectedTimeSeconds();
-                currentCoreSize = dlg.getSelectedCoreSize();
+                currentIsHardMode = dlg.isHardMode();
+                currentMusicVolume = dlg.getMusicVolume();
+                if (onModeChange != null) onModeChange.accept(currentIsHardMode);
                 if (onRestart != null) onRestart.run();
             }
         });
