@@ -83,10 +83,9 @@ public class BoardPanel extends JPanel {
         this.gameBoard = gameBoard;
 
         setPreferredSize(new Dimension(this.width, this.height));
-        // 计算格子尺寸并居中，四边留空白边距
-        int margin = 35;
-        this.cellWidth = (this.width - 2 * margin) / totalCol;
-        this.cellHeight = (this.height - 2 * margin) / totalRow;
+        // 格子尺寸按面板大小计算，整数除法余数自然居中
+        this.cellWidth = this.width / totalCol;
+        this.cellHeight = this.height / totalRow;
         this.offSetX = (this.width - this.cellWidth * totalCol) / 2;
         this.offSetY = (this.height - this.cellHeight * totalRow) / 2;
 

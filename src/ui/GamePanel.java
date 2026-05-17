@@ -50,15 +50,20 @@ public class GamePanel extends JPanel {
         int totalRow = board.length;
         int totalCol = board[0].length;
 
-        // ── 创建子面板（左侧 800px 宽） ──
-        statusPanel = new StatusPanel(0, 0, 800, 100);
-        boardPanel = new BoardPanel(new GameBoard(totalRow, totalCol, board), statusPanel,
-                0, 100, 800, 800);
-        controlPanel = new ControlPanel(statusPanel, boardPanel, 0, 900, 800, 100);
+        // ── 面板间距 ──
+        int gap = 10;
+        int leftW = 780;   // 左侧内容区宽度（右栏猫面板 200px）
 
-        // ── 右侧猫面板（200px 宽） ──
+        // ── 创建子面板（左侧） ──
+        statusPanel = new StatusPanel(gap, gap, leftW, 90);
+        boardPanel = new BoardPanel(new GameBoard(totalRow, totalCol, board), statusPanel,
+                gap, gap + 100, leftW, leftW);
+        controlPanel = new ControlPanel(statusPanel, boardPanel,
+                gap, gap + 100 + leftW + gap, leftW, 90);
+
+        // ── 右侧猫面板 ──
         catPanel = new CatPanel();
-        catPanel.setBounds(800, 0, 200, 1000);
+        catPanel.setBounds(gap + leftW + gap, gap, 200 - gap, 1000 - 2 * gap);
 
         add(statusPanel);
         add(boardPanel);
